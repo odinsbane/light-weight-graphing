@@ -148,12 +148,24 @@ public class Graph {
 
         transform = new AffineTransform(width,0.0,0.0,-height,offset - MINX*width,CHEIGHT + MINY*height - offset);
         //p.setTransform( transform );
+
+        drawYTics(p,offset);
+
         p.setClip((int)offset,(int)PADDING,(int)(CWIDTH-(PADDING + offset)),(int)(CHEIGHT-(PADDING + offset)));
         for(DataSet set: DATASETS)
             drawSet(set, p, transform);
     }
 
+    public void drawYTics(GraphPainter p, double offset){
+        for(int i = 0; i<5; i++){
 
+            int x0 = (int)(offset + 5);
+            int x1 = (int)offset;
+            int y = (int)((CHEIGHT-offset-PADDING)*i/4 + PADDING);
+            p.drawLine(x0,y,x1,y);
+
+        }
+    }
 
     public void clearData(){
         DATASETS.clear();
