@@ -3,6 +3,7 @@ package lightgraph;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.awt.geom.Point2D;
+import java.util.Iterator;
 
 /**
  * This class will hold a set of data it will keep track of color, line types, point types,
@@ -12,7 +13,7 @@ import java.awt.geom.Point2D;
  * Date: May 20, 2010
  * Time: 6:41:24 AM
  */
-public class DataSet {
+public class DataSet implements Iterable<Point2D>{
     Color COLOR;
     GraphPoints POINTS;
     GraphLine LINE;
@@ -61,6 +62,10 @@ public class DataSet {
             p = PlotType.points;
         } else
             p = PlotType.linespoints;
+    }
+
+    public Iterator<Point2D> iterator(){
+        return DATA.iterator();
     }
 }
 
