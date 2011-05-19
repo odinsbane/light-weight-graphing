@@ -359,7 +359,12 @@ public class Graph {
     public DataSet getDataSet(int i){
         return DATASETS.get(i);
     }
-    
+
+    public int dataSetCount(){
+
+        return DATASETS.size();
+        
+    }
     /**
      * Shows the graph in its own JFrame
      *
@@ -367,7 +372,7 @@ public class Graph {
     public void show(){
         GraphFrame y = new GraphFrame("Graph Panel");
         //y.setSize(640,480);
-        y.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //y.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         resetGraph();
         
@@ -377,6 +382,21 @@ public class Graph {
         y.pack();        
         y.setVisible(true);
 
+    }
+
+    public void show(boolean exit_on_close){
+        GraphFrame y = new GraphFrame("Graph Panel");
+        //y.setSize(640,480);
+        if(exit_on_close)
+            y.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        resetGraph();
+
+        panel = new GraphPanel(img);
+
+        y.setGraph(this);
+        y.pack();
+        y.setVisible(true);
     }
 
     public void repaint(){

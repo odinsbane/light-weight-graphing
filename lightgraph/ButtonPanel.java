@@ -90,11 +90,18 @@ public class ButtonPanel extends JPanel implements MouseListener {
             case PNG:
                 savePng();
                 break;
+            case DATA:
+                showData();
+                break;
             default:
                 System.out.println("not implemented");
 
         }
 
+    }
+
+    public void showData(){
+        EventQueue.invokeLater(DataWindow.createDataWindow(GRAPH));
     }
     public void saveSvg(){
         FileDialog fd = new FileDialog(parent,"Save as SVG file...",FileDialog.SAVE);
