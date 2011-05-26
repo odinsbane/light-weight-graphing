@@ -9,15 +9,14 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.awt.geom.Point2D;
 
-import java.util.Iterator;
-
 
 import javax.imageio.ImageIO;
-import javax.swing.JFrame;
+import javax.swing.*;
 
 
 /**
@@ -29,7 +28,11 @@ public class Graph {
     boolean AUTOX, AUTOY, XLABEL, YLABEL, GRID, XTICS, YTICS, TITLE;
     double MINX, MINY, MAXX, MAXY;
     double PADDING = 10;
+    double YTICS_WIDTH = 30;
+    double XTICS_HEIGHT = 20;
     double TITLE_HEIGHT=0;
+
+    FontMetrics FONT_METRICS;
     /** indicates a pending scale */
     boolean SCALE;
     /**canvas height and width*/
@@ -62,7 +65,8 @@ public class Graph {
         YTICS = true;
 
         img = new BufferedImage(CWIDTH,CHEIGHT, BufferedImage.TYPE_INT_RGB);
-
+        Graphics g = img.getGraphics();
+        FONT_METRICS = g.getFontMetrics();
         DATASETS = new ArrayList<DataSet>();
 
         SCALE=false;
@@ -116,16 +120,26 @@ public class Graph {
     public void resetGraph(GraphPainter p){
         if(SCALE)
             autoScale();
-        double offset = PADDING;
         if(XTICS||YTICS){
+            createTics();
+        }
+        double xoffset = PADDING;
+        double yoffset = PADDING;
 
-            offset += 30;
+        if(XTICS){
+            xoffset += YTICS_WIDTH;
+        }
+
+        if(YTICS){
+
+            yoffset += XTICS_HEIGHT;
 
         }
 
-        if(XLABEL||YLABEL)
-            offset += 20;
-        
+        if(XLABEL||YLABEL){
+            xoffset += 20;
+            yoffset += 20;
+        }
 
         p.setColor(BACKGROUND);
         p.fill(new Rectangle(0,0,CWIDTH,CHEIGHT));
@@ -137,36 +151,78 @@ public class Graph {
 
         double m00, double m10, double m01, double m11, double m02, double m12
          */
-        double width = (CWIDTH - PADDING - offset)/CWIDTH;
-        double height = (CHEIGHT - PADDING - offset)/CHEIGHT;
+        double width = (CWIDTH - PADDING - xoffset)/CWIDTH;
+        double height = (CHEIGHT - PADDING - yoffset)/CHEIGHT;
 
-        AffineTransform transform = new AffineTransform(width,0.0,0.0,-height,offset,CHEIGHT - offset);
+        AffineTransform transform = new AffineTransform(width,0.0,0.0,-height,xoffset,CHEIGHT - yoffset);
         drawBorder(p,transform);
 
-        width = (CWIDTH-offset - PADDING)/(MAXX - MINX);
-        height = (CHEIGHT-offset - PADDING)/(MAXY - MINY);
+        width = (CWIDTH-xoffset - PADDING)/(MAXX - MINX);
+        height = (CHEIGHT-yoffset - PADDING)/(MAXY - MINY);
 
-        transform = new AffineTransform(width,0.0,0.0,-height,offset - MINX*width,CHEIGHT + MINY*height - offset);
+        transform = new AffineTransform(width,0.0,0.0,-height,xoffset - MINX*width,CHEIGHT + MINY*height - yoffset);
         //p.setTransform( transform );
 
-        drawYTics(p,offset);
+        drawYTics(p,transform);
+        drawXTics(p,transform);
 
-        p.setClip((int)offset,(int)PADDING,(int)(CWIDTH-(PADDING + offset)),(int)(CHEIGHT-(PADDING + offset)));
+        p.setClip((int)xoffset,(int)PADDING,(int)(CWIDTH-(PADDING + xoffset)),(int)(CHEIGHT-(PADDING + yoffset)));
         for(DataSet set: DATASETS)
             drawSet(set, p, transform);
     }
 
-    public void drawYTics(GraphPainter p, double offset){
-        for(int i = 0; i<5; i++){
+    /**
+     *  Takes the full y range and breaks it into 5 tics, uses the transform to place points.
+     * @param p
+     * @param t
+     */
+    public void drawYTics(GraphPainter p, AffineTransform t){
+        double delta = (MAXY - MINY)/4;
 
-            int x0 = (int)(offset + 5);
-            int x1 = (int)offset;
-            int y = (int)((CHEIGHT-offset-PADDING)*i/4 + PADDING);
+        for(int i = 0; i<5; i++){
+            double ynot = MINY + i*delta;
+            double xnot = MINX;
+            Point2D pt = new Point2D.Double(xnot,ynot);
+
+            t.transform(pt,pt);
+
+            int x0 = (int)pt.getX();
+            int x1 = x0+5;
+            int y = (int)pt.getY();
+
             p.drawLine(x0,y,x1,y);
+            String value = MessageFormat.format("{0}", ynot);
+
+            p.drawString(MessageFormat.format("{0}",ynot),x0-(int)YTICS_WIDTH,y + 5);
 
         }
     }
 
+    /**
+     *  Takes the full x range and breaks it into 7 tics, uses the transform to place points.
+     * @param p
+     * @param t
+     */
+    public void drawXTics(GraphPainter p, AffineTransform t){
+        double delta = (MAXX - MINX)/6;
+
+        for(int i = 0; i<7; i++){
+            double ynot = MINY;
+            double xnot = MINX + delta*i;
+            Point2D pt = new Point2D.Double(xnot,ynot);
+
+            t.transform(pt,pt);
+
+            int x = (int)pt.getX();
+            int y0 = (int)pt.getY();
+            int y1 = y0-5;
+
+            p.drawLine(x,y0,x,y1);
+
+            p.drawString(xtics[i],x-3,y0 + 15);
+
+        }
+    }
     public void clearData(){
         DATASETS.clear();
     }
@@ -229,10 +285,43 @@ public class Graph {
 
     }
 
-    
+    /**
+     * Creates the strings for the width, and calculates their dimensions so that the graph
+     * can be appropriately scaled.
+     *
+     */
     public void createTics(){
-        
-        
+        double delta = (MAXX - MINX)/6;
+        xtics = new String[7];
+        //add padding to the right side of the graph due to overflow of x-tic label.
+        int x_overflow = 0;
+
+        for(int i = 0; i<7; i++){
+            double xnot = MINX + delta*i;
+
+            String value = MessageFormat.format("{0}",xnot);
+            int now_width = SwingUtilities.computeStringWidth(FONT_METRICS,value);
+            x_overflow = now_width>x_overflow?now_width:x_overflow;
+
+            xtics[i] = value;
+        }
+
+
+        delta = (MAXY - MINY)/4;
+        ytics = new String[5];
+        int ytics_width = 0;
+        for(int i = 0; i<5; i++){
+            double ynot = MINY + i*delta;
+
+            String value = MessageFormat.format("{0}", ynot);
+
+            int now_width = SwingUtilities.computeStringWidth(FONT_METRICS,value);
+            ytics_width = ytics_width>now_width?ytics_width:now_width;
+            ytics[i] = value;
+        }
+
+        PADDING = 10 + x_overflow;
+        YTICS_WIDTH = ytics_width;
 
     }
     /**

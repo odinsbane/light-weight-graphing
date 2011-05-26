@@ -177,7 +177,10 @@ class SvgPainter implements GraphPainter{
     }
 
     public void drawLine(int x0, int y0, int x1, int y1) {
-
+        OUTPUT.append(MessageFormat.format("<line x1=\"{0}\" y1=\"{1}\" x2=\"{2}\" y2=\"{3}\" ",x0,y0,x1,y1));
+        OUTPUT.append(" stroke=\"" + svgColorString(COLOR)  + '"');
+        OUTPUT.append(" fill=\"none\"");
+        OUTPUT.append(" stroke-width=\"1\" />\n");
     }
 
     public void fill(Shape s) {
