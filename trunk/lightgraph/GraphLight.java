@@ -62,7 +62,7 @@ public class GraphLight {
 
             new Runnable(){
                 public void run(){
-                    xy.show();
+                    xy.show(true);
                 }
             }
         );
