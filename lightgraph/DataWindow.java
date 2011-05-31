@@ -34,12 +34,14 @@ public class DataWindow implements Runnable, ActionListener {
         table = new JTable();
 
         table.setFillsViewportHeight(true);
+        table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         table.setModel(model);
 
         JScrollPane jsp = new JScrollPane(table);
 
         frame.add(jsp);
         frame.setSize(600,800);
+
 
         JMenuBar menubar = new JMenuBar();
         JMenu file = new JMenu("file");
@@ -84,7 +86,6 @@ public class DataWindow implements Runnable, ActionListener {
 
 
             }
-            System.out.println("adding" + x.size());
             dw.addColumn("x" + i, x);
             dw.addColumn("y" + i, y);
 
