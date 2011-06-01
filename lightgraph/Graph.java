@@ -31,6 +31,10 @@ public class Graph {
     double YTICS_WIDTH = 30;
     double XTICS_HEIGHT = 20;
     double TITLE_HEIGHT=0;
+    double FONT_HEIGHT = 20;
+
+    double LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN;
+
 
     FontMetrics FONT_METRICS;
     /** indicates a pending scale */
@@ -48,6 +52,7 @@ public class Graph {
 
     GraphPanel panel;
     GraphMutex IMAGE_LOCK = new GraphMutex();
+    private JFrame frame;
     public Graph(){
         MINX = Double.MAX_VALUE;
         MINY = Double.MAX_VALUE;
@@ -96,6 +101,28 @@ public class Graph {
         return d;
     }
 
+    /**
+     * replaces the data set with a new data set consisting of the xy pairs.
+     *
+     * @param set
+     * @param x
+     * @param y
+     * @return
+     */
+    public DataSet replaceData(int set, double[] x, double[] y){
+        DataSet d = new DataSet(x,y);
+        DATASETS.remove(set);
+        if(set<DATASETS.size()){
+
+            DATASETS.add(set,d);
+
+        }else{
+            DATASETS.add(d);
+        }
+        SCALE = true;
+        return d;
+    }
+
     public void resizeGraph(int x, int y){
         CHEIGHT = x;
         CWIDTH =  y;
@@ -120,25 +147,39 @@ public class Graph {
     public void resetGraph(GraphPainter p){
         if(SCALE)
             autoScale();
+
+        LEFT_MARGIN = PADDING;
+        RIGHT_MARGIN = PADDING;
+        TOP_MARGIN = PADDING;
+        BOTTOM_MARGIN = PADDING;
+
         if(XTICS||YTICS){
             createTics();
         }
-        double xoffset = PADDING;
-        double yoffset = PADDING;
 
+
+        
         if(XTICS){
-            xoffset += YTICS_WIDTH;
+            LEFT_MARGIN += YTICS_WIDTH;
         }
 
         if(YTICS){
 
-            yoffset += XTICS_HEIGHT;
+            BOTTOM_MARGIN += XTICS_HEIGHT;
 
         }
 
-        if(XLABEL||YLABEL){
-            xoffset += 20;
-            yoffset += 20;
+        if(XLABEL){
+            LEFT_MARGIN += FONT_HEIGHT;
+        }
+        if(YLABEL){
+            BOTTOM_MARGIN += FONT_HEIGHT;
+        }
+
+        if(TITLE){
+
+            TOP_MARGIN += FONT_HEIGHT;
+
         }
 
         p.setColor(BACKGROUND);
@@ -151,22 +192,22 @@ public class Graph {
 
         double m00, double m10, double m01, double m11, double m02, double m12
          */
-        double width = (CWIDTH - PADDING - xoffset)/CWIDTH;
-        double height = (CHEIGHT - PADDING - yoffset)/CHEIGHT;
+        double width = (CWIDTH - LEFT_MARGIN - RIGHT_MARGIN)/CWIDTH;
+        double height = (CHEIGHT - TOP_MARGIN - BOTTOM_MARGIN)/CHEIGHT;
 
-        AffineTransform transform = new AffineTransform(width,0.0,0.0,-height,xoffset,CHEIGHT - yoffset);
+        AffineTransform transform = new AffineTransform(width,0.0,0.0,-height,LEFT_MARGIN,CHEIGHT - BOTTOM_MARGIN);
         drawBorder(p,transform);
 
-        width = (CWIDTH-xoffset - PADDING)/(MAXX - MINX);
-        height = (CHEIGHT-yoffset - PADDING)/(MAXY - MINY);
+        width = (CWIDTH - LEFT_MARGIN - RIGHT_MARGIN)/(MAXX - MINX);
+        height = (CHEIGHT - TOP_MARGIN - BOTTOM_MARGIN)/(MAXY - MINY);
 
-        transform = new AffineTransform(width,0.0,0.0,-height,xoffset - MINX*width,CHEIGHT + MINY*height - yoffset);
+        transform = new AffineTransform(width,0.0,0.0,-height,LEFT_MARGIN - MINX*width,CHEIGHT + MINY*height - BOTTOM_MARGIN);
         //p.setTransform( transform );
 
         drawYTics(p,transform);
         drawXTics(p,transform);
 
-        p.setClip((int)xoffset,(int)PADDING,(int)(CWIDTH-(PADDING + xoffset)),(int)(CHEIGHT-(PADDING + yoffset)));
+        p.setClip((int)LEFT_MARGIN,(int)TOP_MARGIN,(int)(CWIDTH-(LEFT_MARGIN + RIGHT_MARGIN)),(int)(CHEIGHT-(TOP_MARGIN+BOTTOM_MARGIN)));
         for(DataSet set: DATASETS)
             drawSet(set, p, transform);
     }
@@ -291,37 +332,45 @@ public class Graph {
      *
      */
     public void createTics(){
-        double delta = (MAXX - MINX)/6;
-        xtics = new String[7];
-        //add padding to the right side of the graph due to overflow of x-tic label.
-        int x_overflow = 0;
 
-        for(int i = 0; i<7; i++){
-            double xnot = MINX + delta*i;
+        if(XTICS){
+            double delta = (MAXX - MINX)/6;
+            xtics = new String[7];
+            //add padding to the right side of the graph due to overflow of x-tic label.
+            int x_overflow = 0;
 
-            String value = MessageFormat.format("{0}",xnot);
-            int now_width = SwingUtilities.computeStringWidth(FONT_METRICS,value);
-            x_overflow = now_width>x_overflow?now_width:x_overflow;
+            for(int i = 0; i<7; i++){
+                double xnot = MINX + delta*i;
 
-            xtics[i] = value;
+                String value = MessageFormat.format("{0}",xnot);
+                int now_width = SwingUtilities.computeStringWidth(FONT_METRICS,value);
+                x_overflow = now_width>x_overflow?now_width:x_overflow;
+
+                xtics[i] = value;
+            }
+
+            RIGHT_MARGIN += x_overflow;
         }
 
+        if(YTICS){
+            double delta = (MAXY - MINY)/4;
+            ytics = new String[5];
+            int ytics_width = 0;
+            for(int i = 0; i<5; i++){
+                double ynot = MINY + i*delta;
 
-        delta = (MAXY - MINY)/4;
-        ytics = new String[5];
-        int ytics_width = 0;
-        for(int i = 0; i<5; i++){
-            double ynot = MINY + i*delta;
+                String value = MessageFormat.format("{0}", ynot);
 
-            String value = MessageFormat.format("{0}", ynot);
+                int now_width = SwingUtilities.computeStringWidth(FONT_METRICS,value);
+                ytics_width = ytics_width>now_width?ytics_width:now_width;
+                ytics[i] = value;
+            }
 
-            int now_width = SwingUtilities.computeStringWidth(FONT_METRICS,value);
-            ytics_width = ytics_width>now_width?ytics_width:now_width;
-            ytics[i] = value;
+
+            YTICS_WIDTH = ytics_width;
+            //set in 'reset function.
+            //LEFT_MARGIN += YTICS_WIDTH;
         }
-
-        PADDING = 10 + x_overflow;
-        YTICS_WIDTH = ytics_width;
 
     }
     /**
@@ -374,13 +423,16 @@ public class Graph {
                 MAXX++;
                 MINX--;
             }
+
+            MAXY = AUTOY?mxy:MAXY;
+            MINY = AUTOY?mny:MINY;
+
             if(AUTOY&&MAXY==MINY){
                 System.out.println("Warner: Y-Range is zero rescaline");
                 MAXY++;
                 MINY--;
             }
-            MAXY = AUTOY?mxy:MAXY;
-            MINY = AUTOY?mny:MINY;
+
         }
         SCALE=false;
     }
@@ -454,27 +506,39 @@ public class Graph {
         return DATASETS.size();
         
     }
+
+    /**
+     * Append a data point to an existing data set.
+     *
+     * @param set
+     * @param x
+     * @param y
+     */
+    public void appendPoint(int set, double x, double y){
+
+        DATASETS.get(set).addPoint(x,y);
+        SCALE = true;
+
+    }
+
+
     /**
      * Shows the graph in its own JFrame
      *
      */
     public void show(){
-        GraphFrame y = new GraphFrame("Graph Panel");
-        //y.setSize(640,480);
-        //y.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        resetGraph();
-        
-        panel = new GraphPanel(img);
-
-        y.setGraph(this);
-        y.pack();        
-        y.setVisible(true);
+        show(true);
 
     }
+    public void show(boolean exit_on_close, String window_title){
+        if(frame!=null){
 
-    public void show(boolean exit_on_close){
-        GraphFrame y = new GraphFrame("Graph Panel");
+            frame.setVisible(true);
+            return;
+
+        }
+
+        GraphFrame y = new GraphFrame(window_title);
         //y.setSize(640,480);
         if(exit_on_close)
             y.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -486,6 +550,15 @@ public class Graph {
         y.setGraph(this);
         y.pack();
         y.setVisible(true);
+
+        frame = y;
+
+    }
+
+    public void show(boolean exit_on_close){
+
+        show(exit_on_close, "Graph Panel");
+
     }
 
     public void repaint(){
