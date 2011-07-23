@@ -99,7 +99,8 @@ public class DataWindow implements Runnable, ActionListener {
     public void actionPerformed(ActionEvent event){
         if(event.getActionCommand().equals("vertical"))
             saveVertical();
-        saveHorizontal();
+        else
+            saveHorizontal();
 
     }
     /**
