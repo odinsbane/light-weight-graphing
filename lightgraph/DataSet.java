@@ -67,6 +67,12 @@ public class DataSet implements Iterable<Point2D>{
     public Iterator<Point2D> iterator(){
         return DATA.iterator();
     }
+
+    public void setData(double[] x, double[] y){
+        DATA.clear();
+        for(int i = 0; i<x.length; i++)
+            DATA.add(new Point2D.Double(x[i],y[i]));
+    }
 }
 
 enum PlotType{
