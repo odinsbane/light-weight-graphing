@@ -59,6 +59,10 @@ public class GraphLight {
         xy.setXRange(1,11.5);
         xy.setYRange(-0.5,0.5);
         xy.appendPoint(0,0,0);
+
+        DataSet ds = xy.getDataSet(0);
+        ds.setLabel("default");
+        
         SwingUtilities.invokeLater(
 
             new Runnable(){
