@@ -19,6 +19,7 @@ public class DataSet implements Iterable<Point2D>{
     GraphLine LINE;
     ArrayList<Point2D> DATA;
     public PlotType p;
+    String label;
     public DataSet(double[] x, double[] y){
 
         POINTS = GraphPoints.hollowCircles();
@@ -72,6 +73,17 @@ public class DataSet implements Iterable<Point2D>{
         DATA.clear();
         for(int i = 0; i<x.length; i++)
             DATA.add(new Point2D.Double(x[i],y[i]));
+    }
+
+    /**
+     * Sets the label, if there is a label on an active data set then
+     * the key will be drawn.
+     *
+     * @param l @nullable data set label.  null will make this line be skipped.
+     *
+     */
+    public void setLabel(String l){
+        label = l;
     }
 }
 

@@ -210,6 +210,47 @@ public class Graph {
         p.setClip((int)LEFT_MARGIN,(int)TOP_MARGIN,(int)(CWIDTH-(LEFT_MARGIN + RIGHT_MARGIN)),(int)(CHEIGHT-(TOP_MARGIN+BOTTOM_MARGIN)));
         for(DataSet set: DATASETS)
             drawSet(set, p, transform);
+
+        drawKey(p);
+    }
+
+    void drawKey(GraphPainter p){
+
+        int count = 0;
+        for(DataSet set: DATASETS){
+
+            if(set.label!=null){
+                p.setColor(Color.BLACK);
+                p.drawString(set.label, CWIDTH - 100, 30 + count*15);
+                p.setColor(set.COLOR);
+                ArrayList<Point2D> pts = new ArrayList<Point2D>();
+                pts.add(new Point2D.Double(CWIDTH - 140, 24 + count*15));
+                pts.add(new Point2D.Double(CWIDTH - 110, 24 + count*15));
+
+                Point2D middle = new Point2D.Double(CWIDTH - 125, 24 + count*15);
+                switch(set.p){
+
+                    case linespoints:
+                        set.LINE.drawLine(pts, p);
+
+                    case points:
+
+                        set.POINTS.drawPoint(middle, p);
+
+                        break;
+
+                    case lines:
+                        set.LINE.drawLine(pts, p);
+                    break;
+
+                }
+                count++;
+            }
+
+
+        }
+
+
     }
 
     /**
@@ -400,10 +441,10 @@ public class Graph {
     public void autoScale(){
         if(AUTOX||AUTOY){
 
-            double mnx = 0;
-            double mny = 0;
-            double mxx = 0;
-            double mxy = 0;
+            double mnx = Double.MAX_VALUE;
+            double mny = Double.MAX_VALUE;
+            double mxx = -Double.MAX_VALUE;
+            double mxy = -Double.MAX_VALUE;
 
             for(DataSet set: DATASETS){
                 for(Point2D pt: set.DATA){
@@ -570,6 +611,20 @@ public class Graph {
             e.printStackTrace();
         }
         IMAGE_LOCK.release();
+    }
+
+    /**
+     * This does all of the reset/repaint functions.  Additionaly
+     * it will request a rescale.
+     *
+     *
+     * @param rescale if the auto scale is performed.
+     */
+    public void refresh(boolean rescale){
+        SCALE = rescale;
+        resetGraph();
+        repaint();
+
     }
 
 
