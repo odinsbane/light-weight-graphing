@@ -96,6 +96,7 @@ public class Graph {
      */
     public DataSet addData(double[] x, double[] y){
         DataSet d = new DataSet(x,y);
+        d.setColor(GraphDefaults.getDefaultColor(DATASETS.size()));
         DATASETS.add(d);
         SCALE = true;
         return d;
@@ -111,6 +112,12 @@ public class Graph {
      */
     public DataSet replaceData(int set, double[] x, double[] y){
         DataSet d = new DataSet(x,y);
+        DataSet old = DATASETS.get(set);
+        d.setColor(old.COLOR);
+        d.setPoints(old.POINTS);
+        d.setLine(old.LINE);
+        d.setLabel(old.label);
+
         DATASETS.remove(set);
         if(set<DATASETS.size()){
 
@@ -220,7 +227,7 @@ public class Graph {
         for(DataSet set: DATASETS){
 
             if(set.label!=null){
-                p.setColor(Color.BLACK);
+                p.setColor(AXIS_COLOR);
                 p.drawString(set.label, CWIDTH - 100, 30 + count*15);
                 p.setColor(set.COLOR);
                 ArrayList<Point2D> pts = new ArrayList<Point2D>();
@@ -621,7 +628,7 @@ public class Graph {
      * @param rescale if the auto scale is performed.
      */
     public void refresh(boolean rescale){
-        SCALE = rescale;
+        SCALE = rescale||SCALE;
         resetGraph();
         repaint();
 

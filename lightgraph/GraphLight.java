@@ -48,10 +48,12 @@ public class GraphLight {
     public static void main(String[] args){
         double[] x = new double[1000];
         double[] y = new double[1000];
+        double[] z = new double[1000];
         for(int i = 0; i<x.length; i++){
 
             x[i] = i*Math.PI*0.01;
             y[i] = Math.cos(x[i]);
+            z[i] = Math.sin(x[i]);
 
         }
         final Graph xy = new Graph(x,y);
@@ -61,7 +63,9 @@ public class GraphLight {
         xy.appendPoint(0,0,0);
 
         DataSet ds = xy.getDataSet(0);
-        ds.setLabel("default");
+        ds.setLabel("cos");
+        xy.addData(x,z).setLabel("sin");
+
         
         SwingUtilities.invokeLater(
 
