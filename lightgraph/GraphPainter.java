@@ -9,6 +9,8 @@ import java.io.FileWriter;
 import java.text.MessageFormat;
 
 /**
+ * For painting a graph, the implementations either use a graphics object
+ * or paint to an svg file.
  *
  * @author mbs207
  */
@@ -129,7 +131,7 @@ class SvgPainter implements GraphPainter{
     public void drawPath(Shape s) {
         Rectangle r = s.getBounds();
 
-        if(CLIPPING&&!r.intersects(clip))
+        if(CLIPPING&&!(r.intersects(clip)||clip.contains(r.getX(), r.getY())))
             return;
 
         OUTPUT.append("<path d=\"\n");

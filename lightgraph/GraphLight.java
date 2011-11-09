@@ -64,7 +64,15 @@ public class GraphLight {
 
         DataSet ds = xy.getDataSet(0);
         ds.setLabel("cos");
-        xy.addData(x,z).setLabel("sin");
+        GraphPoints cross = GraphPoints.crossX();
+        cross.setSize(6);
+        ds.setPoints(cross);
+
+        ds = xy.addData(x,z);
+        ds.setLabel("sin");
+        GraphPoints squares = GraphPoints.hollowSquares();
+        squares.setSize(6);
+        ds.setPoints(squares);
 
         
         SwingUtilities.invokeLater(
