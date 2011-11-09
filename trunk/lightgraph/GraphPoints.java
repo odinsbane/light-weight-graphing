@@ -5,8 +5,9 @@
 
 package lightgraph;
 
-import java.awt.Dimension;
+import java.awt.*;
 import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
 import java.awt.geom.RectangularShape;
 import java.awt.geom.Ellipse2D;
 
@@ -15,9 +16,16 @@ import java.awt.geom.Ellipse2D;
  * @author mbs207
  */
 public abstract class GraphPoints {
-    int SIZE = 12;
+    int SIZE = 6;
     int WEIGHT = 1;
     abstract void drawPoint(Point2D pt, GraphPainter painter);
+
+    /**
+     * Sets the size of the graph points, the implementation needs to
+     * implement this parameter.
+     *
+     * @param s
+     */
     public void setSize(int s){
         SIZE = s;
     }
@@ -25,17 +33,36 @@ public abstract class GraphPoints {
     public void setWeight(int w){
         WEIGHT = w;
     }
-    /*
+
     static GraphPoints hollowSquares(){
         return new GraphPoints(){
+            Rectangle2D bounds = new Rectangle2D.Double(0,0,SIZE,SIZE);
+            Point2D corner = new Point2D.Double(0,0);
 
-            void drawPoint(Graphics g){
 
+            void drawPoint(Point2D pt, GraphPainter painter){
+                double leg = SIZE/2;
+                corner.setLocation(pt.getX() + leg, pt.getY() + leg);
+                bounds.setFrameFromCenter(pt,corner);
+                painter.drawPath(bounds);
             }
 
         };
     }
 
+    static GraphPoints crossX(){
+        return new GraphPoints(){
+
+            void drawPoint(Point2D pt, GraphPainter painter){
+                int leg = SIZE/2;
+                painter.drawLine((int)pt.getX()-leg, (int)pt.getY()-leg, (int)pt.getX()+leg, (int)pt.getY()+leg);
+                painter.drawLine((int)pt.getX()-leg, (int)pt.getY()+leg, (int)pt.getX()+leg, (int)pt.getY()-leg);
+            }
+
+        };
+    }
+
+    /*
     static GraphPoints filledSquares(){
         return new GraphPoints(){
 

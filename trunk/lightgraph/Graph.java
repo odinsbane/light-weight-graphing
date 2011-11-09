@@ -146,9 +146,11 @@ public class Graph {
      */
     public void resetGraph(){
         IMAGE_LOCK.get();
-        Graphics2D g = img.createGraphics();
+        BufferedImage image = new BufferedImage(CWIDTH,CHEIGHT, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = image.createGraphics();
         resetGraph(new PanelPainter(g));
         g.dispose();
+        img = image;
         IMAGE_LOCK.release();
     }
     public void resetGraph(GraphPainter p){
@@ -368,9 +370,13 @@ public class Graph {
     }
 
     public void savePng(File f) throws IOException {
+        final BufferedImage image = img;
 
-        ImageIO.write(img, "png",f);
+        IMAGE_LOCK.get();
 
+        ImageIO.write(image, "png",f);
+
+        IMAGE_LOCK.release();
 
     }
 
@@ -641,7 +647,7 @@ public class Graph {
 class GraphMutex{
     boolean HELD = false;
     synchronized public void get(){
-        if(HELD){
+        while(HELD){
             try {
                 wait();
             } catch (InterruptedException e) {
