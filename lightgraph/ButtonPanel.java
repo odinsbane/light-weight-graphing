@@ -22,6 +22,7 @@ public class ButtonPanel extends JPanel implements MouseListener {
     final int TAB = 20;
     int buttons = 0;
     final JFrame parent;
+    GraphFormatWindow FORMATTER;
     ButtonPanel(JFrame parent){
         super();
         this.parent = parent;
@@ -32,6 +33,7 @@ public class ButtonPanel extends JPanel implements MouseListener {
         addButton("SVG");
         addButton("PNG");
         addButton("DATA");
+        addButton("FORMAT");
 
         
     }
@@ -93,13 +95,22 @@ public class ButtonPanel extends JPanel implements MouseListener {
             case DATA:
                 showData();
                 break;
+            case FORMAT:
+                showFormatter();
+                break;
             default:
                 System.out.println("not implemented");
 
         }
 
     }
-
+    public void showFormatter(){
+        if(FORMATTER==null){
+            FORMATTER = new GraphFormatWindow(GRAPH);
+            FORMATTER.initialize();
+        }
+        FORMATTER.display();
+    }
     public void showData(){
         EventQueue.invokeLater(DataWindow.createDataWindow(GRAPH));
     }
@@ -134,19 +145,15 @@ public class ButtonPanel extends JPanel implements MouseListener {
     }
 
     public void mousePressed(MouseEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void mouseReleased(MouseEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void mouseEntered(MouseEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void mouseExited(MouseEvent e) {
-        //To change body of implemented methods use File | Settings | File Templates.
     }
 }
 
@@ -180,5 +187,6 @@ class GraphButton extends JButton{
 enum GraphActions{
     SVG,
     DATA,
-    PNG;
+    PNG,
+    FORMAT;
 }
