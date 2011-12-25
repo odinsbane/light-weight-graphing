@@ -34,7 +34,7 @@ public abstract class GraphPoints {
         WEIGHT = w;
     }
 
-    static GraphPoints hollowSquares(){
+    public static GraphPoints hollowSquares(){
         return new GraphPoints(){
             Rectangle2D bounds = new Rectangle2D.Double(0,0,SIZE,SIZE);
             Point2D corner = new Point2D.Double(0,0);
@@ -50,7 +50,7 @@ public abstract class GraphPoints {
         };
     }
 
-    static GraphPoints crossX(){
+    public static GraphPoints crossX(){
         return new GraphPoints(){
 
             void drawPoint(Point2D pt, GraphPainter painter){
@@ -62,6 +62,17 @@ public abstract class GraphPoints {
         };
     }
 
+    public static GraphPoints crossPlus(){
+        return new GraphPoints(){
+
+            void drawPoint(Point2D pt, GraphPainter painter){
+                int leg = SIZE/2;
+                painter.drawLine((int)pt.getX()-leg, (int)pt.getY(), (int)pt.getX()+leg, (int)pt.getY());
+                painter.drawLine((int)pt.getX(), (int)pt.getY()+leg, (int)pt.getX(), (int)pt.getY()-leg);
+            }
+
+        };
+    }
     /*
     static GraphPoints filledSquares(){
         return new GraphPoints(){
@@ -94,7 +105,7 @@ public abstract class GraphPoints {
         };
         return gp;
     }
-    static GraphPoints hollowCircles(){
+    public static GraphPoints hollowCircles(){
         GraphPoints gp = new GraphPoints(){
             RectangularShape shape = new Ellipse2D.Double(0,0,SIZE, SIZE);
             //Dimension d = new Dimension(12,12);
