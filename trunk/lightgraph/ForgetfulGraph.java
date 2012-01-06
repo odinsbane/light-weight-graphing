@@ -1,5 +1,8 @@
 package lightgraph;
 
+import lightgraph.painters.GraphPainter;
+import lightgraph.painters.PanelPainter;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;

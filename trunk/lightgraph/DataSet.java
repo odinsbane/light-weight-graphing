@@ -14,8 +14,8 @@ import java.util.Iterator;
  * Time: 6:41:24 AM
  */
 public class DataSet implements Iterable<Point2D>{
-    Color COLOR;
-    GraphPoints POINTS;
+    public Color COLOR;
+    public GraphPoints POINTS;
     GraphLine LINE;
     ArrayList<Point2D> DATA;
     public PlotType p;
