@@ -4,6 +4,10 @@
 
 package lightgraph;
 
+import lightgraph.gui.GraphFrame;
+import lightgraph.painters.GraphPainter;
+import lightgraph.painters.PanelPainter;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
@@ -25,8 +29,18 @@ import javax.swing.*;
 * @author mbs207
 */
 public class Graph {
-    boolean AUTOX, AUTOY, XLABEL, YLABEL, GRID, XTICS, YTICS, TITLE;
-    double MINX, MINY, MAXX, MAXY;
+    public boolean AUTOX;
+    public boolean AUTOY;
+    boolean XLABEL;
+    boolean YLABEL;
+    boolean GRID;
+    boolean XTICS;
+    boolean YTICS;
+    boolean TITLE;
+    public double MINX;
+    public double MINY;
+    public double MAXX;
+    public double MAXY;
     double PADDING = 10;
     double YTICS_WIDTH = 30;
     double XTICS_HEIGHT = 20;
@@ -40,17 +54,18 @@ public class Graph {
     /** indicates a pending scale */
     boolean SCALE;
     /**canvas height and width*/
-    int CHEIGHT, CWIDTH;
+    public int CHEIGHT;
+    public int CWIDTH;
 
 
     Color AXIS_COLOR, BACKGROUND;
     BufferedImage img;
-    ArrayList<DataSet> DATASETS;
+    public ArrayList<DataSet> DATASETS;
 
     String[] xtics, ytics;
     String xlabel, ylabel, title;
 
-    GraphPanel panel;
+    public GraphPanel panel;
     GraphMutex IMAGE_LOCK = new GraphMutex();
     private JFrame frame;
     public Graph(){
