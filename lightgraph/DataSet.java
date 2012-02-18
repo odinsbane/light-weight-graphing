@@ -19,7 +19,7 @@ public class DataSet implements Iterable<Point2D>{
     GraphLine LINE;
     ArrayList<Point2D> DATA;
     public PlotType p;
-    String label;
+    public String label;
     public DataSet(double[] x, double[] y){
 
         POINTS = GraphPoints.hollowCircles();

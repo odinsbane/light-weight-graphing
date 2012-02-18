@@ -488,7 +488,7 @@ public class Graph {
             MAXX = AUTOX?mxx:MAXX;
             MINX = AUTOX?mnx:MINX;
             if(AUTOX&&MAXX==MINX){
-                System.out.println("Warner: X-Range is zero rescaline");
+                //System.out.println("Warner: X-Range is zero rescaline");
                 MAXX++;
                 MINX--;
             }
@@ -497,7 +497,7 @@ public class Graph {
             MINY = AUTOY?mny:MINY;
 
             if(AUTOY&&MAXY==MINY){
-                System.out.println("Warner: Y-Range is zero rescaline");
+                //System.out.println("Warner: Y-Range is zero rescaline");
                 MAXY++;
                 MINY--;
             }

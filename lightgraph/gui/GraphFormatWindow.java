@@ -281,11 +281,24 @@ class DataSetRow{
     JPanel panel;
     PointSelector point_selector;
     ColorSelector color_selector;
+    JTextField label;
     public DataSetRow(DataSet set){
         points = GraphPoints.getGraphPoints();
         points.add(null);
         panel = new JPanel();
         panel.setLayout(new BoxLayout(panel,BoxLayout.LINE_AXIS));
+
+        String t = set.label==null?"":set.label;
+        label = new JTextField(t);
+
+        Dimension d = new Dimension(100,40);
+        label.setMaximumSize(d);
+        label.setMinimumSize(d);
+        label.setPreferredSize(d);
+        
+
+        panel.add(label);
+
         this.set = set;
         point_selector = new PointSelector(set.POINTS, set.COLOR);
         panel.add(point_selector);
@@ -350,12 +363,17 @@ class DataSetRow{
 
 
 
-
     }
 
     void updateSet(){
         set.setPoints(point_selector.getPoints());
         set.setColor(color_selector.getColor());
+        String l = label.getText().trim();
+        if(l.isEmpty()){
+            set.label=null;
+        }else{
+            set.label = l;
+        }
     }
 
     DataSet getSet(){
