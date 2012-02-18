@@ -18,6 +18,7 @@ public interface GraphPainter {
     public void drawEllipse(Shape s);
     public void drawPath(Shape s);
     public void setColor(Color c);
+    public Color getColor();
     public void drawLine(int x0, int y0, int x1, int y1);
     public void fill(Shape s);
     public void setClip(int x, int y, int w, int h);

@@ -7,10 +7,8 @@ package lightgraph;
 
 import lightgraph.painters.GraphPainter;
 
-import java.awt.geom.Point2D;
-import java.awt.geom.Rectangle2D;
-import java.awt.geom.RectangularShape;
-import java.awt.geom.Ellipse2D;
+import java.awt.*;
+import java.awt.geom.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -136,6 +134,43 @@ public abstract class GraphPoints {
 
     }
 
+    public static GraphPoints outlinedTriangles(){
+
+        GraphPoints gp = new GraphPoints(){
+            GeneralPath shape;
+            AffineTransform at;
+            {
+                shape=new GeneralPath();
+                shape.moveTo(0,-SIZE);
+                shape.lineTo(Math.sqrt(3)*0.5*SIZE, 0.5*SIZE);
+                shape.lineTo(-Math.sqrt(3)*0.5*SIZE,  0.5*SIZE);
+                shape.closePath();
+                at = new AffineTransform();
+            }
+            public void drawPoint(Point2D pt, GraphPainter painter){
+                at.setToTranslation(pt.getX(), pt.getY());
+                shape.transform(at);
+                painter.fill(shape);
+
+                //store color for undoing.
+                Color c = painter.getColor();
+                painter.setColor(Color.BLACK);
+                painter.drawPath(shape);
+
+                //undo color change.
+                painter.setColor(c);
+
+                //undo translation.
+                at.setToTranslation(-pt.getX(), -pt.getY());
+                shape.transform(at);
+            }
+
+        };
+
+        return gp;
+
+
+    }
     static public List<GraphPoints> getGraphPoints(){
         ArrayList<GraphPoints> points  = new ArrayList<GraphPoints>();
         points.add(crossPlus());
@@ -145,7 +180,7 @@ public abstract class GraphPoints {
         points.add(hollowSquares());
         points.add(hollowDiamonds());
         points.add(filledSquares());
-
+        points.add(outlinedTriangles());
         return points;
     }
 

@@ -30,6 +30,10 @@ public class PanelPainter implements GraphPainter{
         g.setColor(c);
     }
 
+    public Color getColor(){
+        return g.getColor();
+    }
+
     public void drawLine(int x0, int y0, int x1, int y1) {
         g.drawLine(x0,y0,x1,y1);
     }

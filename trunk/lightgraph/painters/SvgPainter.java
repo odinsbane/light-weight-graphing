@@ -208,4 +208,8 @@ public class SvgPainter implements GraphPainter{
             e.printStackTrace();
         }
     }
+
+    public Color getColor(){
+        return COLOR;
+    }
 }
