@@ -85,6 +85,17 @@ public class DataSet implements Iterable<Point2D>{
     public void setLabel(String l){
         label = l;
     }
+
+    public double getLineWidth(){
+        if(LINE==null){
+            return 0;
+        }else{
+            return LINE.getLineWidth();
+        }
+    }
+    public void setLineWidth(double d){
+        LINE.setLineWidth(d);
+    }
 }
 
 enum PlotType{

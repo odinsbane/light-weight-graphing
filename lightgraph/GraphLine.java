@@ -15,17 +15,20 @@ import java.util.ArrayList;
  * To change this template use File | Settings | File Templates.
  */
 public abstract class GraphLine {
-    int WEIGHT = 1;
+    double WIDTH = 1;
     abstract void drawLine(ArrayList<Point2D> pts, GraphPainter painter);
+    public double getLineWidth(){
+        return WIDTH;
+    }
 
-
-    public void setWeight(int w){
-        WEIGHT = w;
+    public void setLineWidth(double w){
+        WIDTH = w;
     }
 
     public static GraphLine solidLine(){
         return new GraphLine(){
             void drawLine(ArrayList<Point2D> pts, GraphPainter painter){
+                painter.setLineWidth(WIDTH);
                 Path2D path = new Path2D.Double();
                 if(pts.size()>0){
                     Point2D pt = pts.get(0);
@@ -37,6 +40,8 @@ public abstract class GraphLine {
                     }
                     painter.drawPath(path);
                 }
+
+                painter.restoreLineWidth();
                 
 
             }

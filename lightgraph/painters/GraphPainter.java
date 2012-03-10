@@ -23,4 +23,6 @@ public interface GraphPainter {
     public void fill(Shape s);
     public void setClip(int x, int y, int w, int h);
     public void drawString(String s, int x, int y);
+    public void setLineWidth(double f);
+    public void restoreLineWidth();
 }

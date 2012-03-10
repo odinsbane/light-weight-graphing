@@ -17,6 +17,7 @@ public class SvgPainter implements GraphPainter{
     StringBuilder OUTPUT;
     Color COLOR;
     boolean CLIPPING = false;
+    double LINE_WIDTH=1;
     Rectangle clip;
     static final String DOCTYPE = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
                 "  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
@@ -119,7 +120,7 @@ public class SvgPainter implements GraphPainter{
         OUTPUT.append("\"");
         OUTPUT.append(" stroke=\"" + svgColorString(COLOR)  + '"');
         OUTPUT.append(" fill=\"none\"");
-        OUTPUT.append(" stroke-width=\"1\" />\n");
+        OUTPUT.append(String.format(" stroke-width=\"%f\" />\n",LINE_WIDTH));
 
     }
 
@@ -131,7 +132,7 @@ public class SvgPainter implements GraphPainter{
         OUTPUT.append(MessageFormat.format("<line x1=\"{0}\" y1=\"{1}\" x2=\"{2}\" y2=\"{3}\" ",x0,y0,x1,y1));
         OUTPUT.append(" stroke=\"" + svgColorString(COLOR)  + '"');
         OUTPUT.append(" fill=\"none\"");
-        OUTPUT.append(" stroke-width=\"1\" />\n");
+        OUTPUT.append(String.format(" stroke-width=\"%f\" />\n",LINE_WIDTH));
     }
 
     public void fill(Shape s) {
@@ -157,7 +158,8 @@ public class SvgPainter implements GraphPainter{
                     break;
                 case PathIterator.SEG_CLOSE:
                     c = 'Z';
-                    OUTPUT.append(c + "\n");
+                    OUTPUT.append(c);
+                    OUTPUT.append("\n");
                     break;
                 case PathIterator.SEG_CUBICTO:
                     c = 'C';
@@ -211,5 +213,14 @@ public class SvgPainter implements GraphPainter{
 
     public Color getColor(){
         return COLOR;
+    }
+
+    public void setLineWidth(double d){
+        LINE_WIDTH=d;
+
+    }
+
+    public void restoreLineWidth(){
+        LINE_WIDTH=1;
     }
 }

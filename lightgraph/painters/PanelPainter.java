@@ -9,15 +9,16 @@ import java.awt.*;
  * Time: 10:26 AM
  */
 public class PanelPainter implements GraphPainter{
+
     Graphics2D g;
+    final Stroke default_stroke;
 
     public PanelPainter(Graphics2D g){
         this.g = g;
+        default_stroke = g.getStroke();
     }
     public void drawEllipse(Shape s){
-
         g.draw(s);
-
     }
 
     public void drawPath(Shape s){
@@ -49,5 +50,16 @@ public class PanelPainter implements GraphPainter{
     public void drawString(String s, int x, int y) {
         g.drawString(s,x,y);
     }
+
+    public void setLineWidth(double width){
+        Stroke s = new BasicStroke((float)width);
+        g.setStroke(s);
+
+    }
+
+    public void restoreLineWidth(){
+        g.setStroke(default_stroke);
+    }
+
 
 }
