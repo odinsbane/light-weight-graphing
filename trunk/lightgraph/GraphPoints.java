@@ -134,6 +134,20 @@ public abstract class GraphPoints {
 
     }
 
+    public static GraphPoints filledCircles(){
+        GraphPoints gp = new GraphPoints(){
+            RectangularShape shape = new Ellipse2D.Double(0,0,SIZE, SIZE);
+            public void drawPoint(Point2D pt, GraphPainter painter){
+                shape.setFrame(pt.getX() - SIZE/2, pt.getY() - SIZE/2,SIZE, SIZE);
+                painter.fill(shape);
+            }
+
+        };
+
+        return gp;
+
+    }
+
     public static GraphPoints outlinedTriangles(){
 
         GraphPoints gp = new GraphPoints(){
@@ -171,16 +185,88 @@ public abstract class GraphPoints {
 
 
     }
+
+    public static GraphPoints hollowTriangles(){
+
+        GraphPoints gp = new GraphPoints(){
+            GeneralPath shape;
+            AffineTransform at;
+            {
+                shape=new GeneralPath();
+                shape.moveTo(0,-SIZE);
+                shape.lineTo(Math.sqrt(3)*0.5*SIZE, 0.5*SIZE);
+                shape.lineTo(-Math.sqrt(3)*0.5*SIZE,  0.5*SIZE);
+                shape.closePath();
+                at = new AffineTransform();
+            }
+            public void drawPoint(Point2D pt, GraphPainter painter){
+                at.setToTranslation(pt.getX(), pt.getY());
+                shape.transform(at);
+                //painter.fill(shape);
+
+                //store color for undoing.
+                //Color c = painter.getColor();
+                //painter.setColor(Color.BLACK);
+                painter.drawPath(shape);
+
+                //undo color change.
+               //painter.setColor(c);
+
+                //undo translation.
+                at.setToTranslation(-pt.getX(), -pt.getY());
+                shape.transform(at);
+            }
+
+        };
+
+        return gp;
+
+
+    }
+
+    public static GraphPoints filledTriangles(){
+
+        GraphPoints gp = new GraphPoints(){
+            GeneralPath shape;
+            AffineTransform at;
+            {
+                shape=new GeneralPath();
+                shape.moveTo(0,-SIZE);
+                shape.lineTo(Math.sqrt(3)*0.5*SIZE, 0.5*SIZE);
+                shape.lineTo(-Math.sqrt(3)*0.5*SIZE,  0.5*SIZE);
+                shape.closePath();
+                at = new AffineTransform();
+            }
+            public void drawPoint(Point2D pt, GraphPainter painter){
+                at.setToTranslation(pt.getX(), pt.getY());
+                shape.transform(at);
+                painter.fill(shape);
+
+                //move shape back to origin.
+                at.setToTranslation(-pt.getX(), -pt.getY());
+                shape.transform(at);
+            }
+
+        };
+
+        return gp;
+
+
+    }
+
     static public List<GraphPoints> getGraphPoints(){
         ArrayList<GraphPoints> points  = new ArrayList<GraphPoints>();
         points.add(crossPlus());
         points.add(crossX());
         points.add(dots());
         points.add(hollowCircles());
+        points.add(filledCircles());
         points.add(hollowSquares());
         points.add(hollowDiamonds());
         points.add(filledSquares());
         points.add(outlinedTriangles());
+        points.add(hollowTriangles());
+        points.add(filledTriangles());
         return points;
     }
 

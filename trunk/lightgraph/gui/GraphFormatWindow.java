@@ -2,6 +2,7 @@ package lightgraph.gui;
 
 import lightgraph.DataSet;
 import lightgraph.Graph;
+import lightgraph.GraphLine;
 import lightgraph.GraphPoints;
 import lightgraph.painters.GraphPainter;
 import lightgraph.painters.PanelPainter;
@@ -30,6 +31,7 @@ public class GraphFormatWindow{
 
     JTextField xrange_low, xrange_high, yrange_low, yrange_high;
     JTextField width, height;
+    JTextField font_size;
     final JFrame frame = new JFrame("graph format window");
     ArrayList<DataSetRow> datasets = new ArrayList<DataSetRow>();
     JPanel dataset_pane;
@@ -59,6 +61,12 @@ public class GraphFormatWindow{
 
         content.add(createRow(rowlist));
 
+        rowlist.add(new JLabel("Font Size:"));
+        font_size = new JTextField();
+        rowlist.add(font_size);
+        sizeComponent(font_size,80,20);
+
+        content.add(createRow(rowlist));
         
         createXRangeComponents(content);
         createYRangeComponents(content);
@@ -197,7 +205,7 @@ public class GraphFormatWindow{
     boolean validateInputs(){
         return true;
     }
-    void sizeComponent(Component c, int width, int height){
+    public static void sizeComponent(Component c, int width, int height){
 
         Dimension d = new Dimension(width,height);
         c.setMinimumSize(d);
@@ -282,6 +290,8 @@ class DataSetRow{
     PointSelector point_selector;
     ColorSelector color_selector;
     JTextField label;
+    JTextField line_width;
+
     public DataSetRow(DataSet set){
         points = GraphPoints.getGraphPoints();
         points.add(null);
@@ -290,14 +300,13 @@ class DataSetRow{
 
         String t = set.label==null?"":set.label;
         label = new JTextField(t);
-
-        Dimension d = new Dimension(100,40);
-        label.setMaximumSize(d);
-        label.setMinimumSize(d);
-        label.setPreferredSize(d);
-        
+        GraphFormatWindow.sizeComponent(label, 100, 40);
 
         panel.add(label);
+
+        line_width = new JTextField(String.format("%2.2f",set.getLineWidth()));
+        GraphFormatWindow.sizeComponent(line_width,60,40);
+        panel.add(line_width);
 
         this.set = set;
         point_selector = new PointSelector(set.POINTS, set.COLOR);
@@ -374,6 +383,25 @@ class DataSetRow{
         }else{
             set.label = l;
         }
+
+        try{
+            double d = Double.parseDouble(line_width.getText());
+            if(d==0){
+                //turn off line
+                set.setLine(null);
+            } else if(set.getLineWidth()==0){
+                //add a line
+                set.setLine(GraphLine.solidLine());
+                set.setLineWidth(d);
+            } else {
+                //update existing line
+                set.setLineWidth(d);
+            }
+        } catch(NumberFormatException ex){
+            ex.printStackTrace();
+            System.out.println("Invalid Line Width");
+        }
+
     }
 
     DataSet getSet(){
