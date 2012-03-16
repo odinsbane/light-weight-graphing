@@ -252,22 +252,14 @@ public class Graph {
                 pts.add(new Point2D.Double(CWIDTH - 110, 24 + count*15));
 
                 Point2D middle = new Point2D.Double(CWIDTH - 125, 24 + count*15);
-                switch(set.p){
 
-                    case linespoints:
-                        set.LINE.drawLine(pts, p);
-
-                    case points:
-
-                        set.POINTS.drawPoint(middle, p);
-
-                        break;
-
-                    case lines:
-                        set.LINE.drawLine(pts, p);
-                    break;
-
+                if(set.LINE!=null){
+                    set.LINE.drawLine(pts, p);
                 }
+                if(set.POINTS!=null){
+                    set.POINTS.drawPoint(middle,p);
+                }
+
                 count++;
             }
 
@@ -337,27 +329,19 @@ public class Graph {
         Point2D scaled;
         ArrayList<Point2D> pts = new ArrayList<Point2D>();
         for(Point2D pt: set.DATA){
-
             scaled = new Point2D.Double();
             pts.add(transform.transform(pt,scaled));
         }
         painter.setColor(set.COLOR);
-        switch(set.p){
-
-            case linespoints:
-                set.LINE.drawLine(pts, painter);
-
-            case points:
-                for(Point2D pt: pts)
-                    set.POINTS.drawPoint(pt, painter);
-
-                break;
-
-            case lines:
-                set.LINE.drawLine(pts, painter);
-                break;
-
+        if(set.LINE!=null){
+            set.LINE.drawLine(pts, painter);
         }
+        if(set.POINTS!=null){
+            for(Point2D pt: pts)
+                set.POINTS.drawPoint(pt, painter);
+        }
+
+
     }
 
     public void drawBorder(GraphPainter p, AffineTransform transform){
