@@ -35,8 +35,8 @@ public class PanelPainter implements GraphPainter{
         return g.getColor();
     }
 
-    public void drawLine(int x0, int y0, int x1, int y1) {
-        g.drawLine(x0,y0,x1,y1);
+    public void drawLine(double x0, double y0, double x1, double y1) {
+        g.drawLine((int)x0,(int)y0,(int)x1,(int)y1);
     }
 
     public void fill(Shape s){
@@ -47,8 +47,8 @@ public class PanelPainter implements GraphPainter{
         g.setClip(x,y,w,h);
     }
 
-    public void drawString(String s, int x, int y) {
-        g.drawString(s,x,y);
+    public void drawString(String s, double x, double y) {
+        g.drawString(s,(int)x,(int)y);
     }
 
     public void setLineWidth(double width){

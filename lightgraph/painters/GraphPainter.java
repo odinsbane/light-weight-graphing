@@ -19,10 +19,10 @@ public interface GraphPainter {
     public void drawPath(Shape s);
     public void setColor(Color c);
     public Color getColor();
-    public void drawLine(int x0, int y0, int x1, int y1);
+    public void drawLine(double x0, double y0, double x1, double y1);
     public void fill(Shape s);
     public void setClip(int x, int y, int w, int h);
-    public void drawString(String s, int x, int y);
+    public void drawString(String s, double x, double y);
     public void setLineWidth(double f);
     public void restoreLineWidth();
 }

@@ -17,8 +17,8 @@ import java.util.List;
  * @author mbs207
  */
 public abstract class GraphPoints {
-    int SIZE = 6;
-    int WEIGHT = 1;
+    double SIZE = 6;
+    double WEIGHT = 1;
     public abstract void drawPoint(Point2D pt, GraphPainter painter);
 
     /**
@@ -27,11 +27,11 @@ public abstract class GraphPoints {
      *
      * @param s
      */
-    public void setSize(int s){
+    public void setSize(double s){
         SIZE = s;
     }
 
-    public void setWeight(int w){
+    public void setWeight(double w){
         WEIGHT = w;
     }
 
@@ -42,10 +42,12 @@ public abstract class GraphPoints {
 
 
             public void drawPoint(Point2D pt, GraphPainter painter){
+                painter.setLineWidth(WEIGHT);
                 double leg = SIZE/2;
                 corner.setLocation(pt.getX() + leg, pt.getY() + leg);
                 bounds.setFrameFromCenter(pt,corner);
                 painter.drawPath(bounds);
+                painter.restoreLineWidth();
             }
 
         };
@@ -55,9 +57,11 @@ public abstract class GraphPoints {
         return new GraphPoints(){
 
             public void drawPoint(Point2D pt, GraphPainter painter){
-                int leg = SIZE/2;
-                painter.drawLine((int)pt.getX()-leg, (int)pt.getY()-leg, (int)pt.getX()+leg, (int)pt.getY()+leg);
-                painter.drawLine((int)pt.getX()-leg, (int)pt.getY()+leg, (int)pt.getX()+leg, (int)pt.getY()-leg);
+                painter.setLineWidth(WEIGHT);
+                double leg = SIZE/2;
+                painter.drawLine(pt.getX()-leg, pt.getY()-leg, pt.getX()+leg, pt.getY()+leg);
+                painter.drawLine(pt.getX()-leg, pt.getY()+leg, pt.getX()+leg, pt.getY()-leg);
+                painter.restoreLineWidth();
             }
 
         };
@@ -67,9 +71,11 @@ public abstract class GraphPoints {
         return new GraphPoints(){
 
             public void drawPoint(Point2D pt, GraphPainter painter){
-                int leg = SIZE/2;
-                painter.drawLine((int)pt.getX()-leg, (int)pt.getY(), (int)pt.getX()+leg, (int)pt.getY());
-                painter.drawLine((int)pt.getX(), (int)pt.getY()+leg, (int)pt.getX(), (int)pt.getY()-leg);
+                painter.setLineWidth(WEIGHT);
+                double leg = SIZE/2;
+                painter.drawLine(pt.getX()-leg, pt.getY(), pt.getX()+leg, pt.getY());
+                painter.drawLine(pt.getX(), pt.getY()+leg, pt.getX(), pt.getY()-leg);
+                painter.restoreLineWidth();
             }
 
         };
@@ -97,7 +103,7 @@ public abstract class GraphPoints {
         return new GraphPoints(){
 
             public void drawPoint(Point2D pt, GraphPainter painter){
-                int leg = SIZE/2;
+                double leg = SIZE/2;
 
                 painter.drawLine((int)pt.getX()-leg, (int)pt.getY(), (int)pt.getX(), (int)pt.getY()+leg);
                 painter.drawLine((int)pt.getX(), (int)pt.getY()+leg, (int)pt.getX()+leg, (int)pt.getY());
@@ -125,7 +131,9 @@ public abstract class GraphPoints {
             RectangularShape shape = new Ellipse2D.Double(0,0,SIZE, SIZE);
             public void drawPoint(Point2D pt, GraphPainter painter){
                 shape.setFrame(pt.getX() - SIZE/2, pt.getY() - SIZE/2,SIZE, SIZE);
+                painter.setLineWidth(WEIGHT);
                 painter.drawEllipse(shape);
+                painter.restoreLineWidth();
             }
 
         };
@@ -169,8 +177,10 @@ public abstract class GraphPoints {
                 //store color for undoing.
                 Color c = painter.getColor();
                 painter.setColor(Color.BLACK);
-                painter.drawPath(shape);
 
+                painter.setLineWidth(WEIGHT);
+                painter.drawPath(shape);
+                painter.restoreLineWidth();
                 //undo color change.
                 painter.setColor(c);
 
@@ -202,17 +212,11 @@ public abstract class GraphPoints {
             public void drawPoint(Point2D pt, GraphPainter painter){
                 at.setToTranslation(pt.getX(), pt.getY());
                 shape.transform(at);
-                //painter.fill(shape);
 
-                //store color for undoing.
-                //Color c = painter.getColor();
-                //painter.setColor(Color.BLACK);
+                painter.setLineWidth(WEIGHT);
                 painter.drawPath(shape);
+                painter.restoreLineWidth();
 
-                //undo color change.
-               //painter.setColor(c);
-
-                //undo translation.
                 at.setToTranslation(-pt.getX(), -pt.getY());
                 shape.transform(at);
             }

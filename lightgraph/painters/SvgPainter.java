@@ -2,6 +2,7 @@ package lightgraph.painters;
 
 import java.awt.*;
 import java.awt.geom.PathIterator;
+import java.awt.geom.Rectangle2D;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -128,7 +129,33 @@ public class SvgPainter implements GraphPainter{
         COLOR = c;
     }
 
-    public void drawLine(int x0, int y0, int x1, int y1) {
+    public void drawLine(double x0, double y0, double x1, double y1) {
+        if(CLIPPING){
+            double x,w;
+            if(x0<x1){
+                x=x0;
+                w=x1-x0;
+            } else{
+                x=x1;
+                w=x0-x1;
+            }
+            
+            double y,h;
+
+            if(y0<y1){
+                y=y0;
+                h=y1-y0;
+            } else{
+                y=y1;
+                h=y0-y1;
+            }
+
+            //only draw lines that intersect somehow.
+            if((!clip.contains(x0,y0))&&(!clip.contains(x1,y1))&&(!clip.intersects(new Rectangle2D.Double(x,y,w,h)))){
+                return;
+            }
+
+        }
         OUTPUT.append(MessageFormat.format("<line x1=\"{0}\" y1=\"{1}\" x2=\"{2}\" y2=\"{3}\" ",x0,y0,x1,y1));
         OUTPUT.append(" stroke=\"" + svgColorString(COLOR)  + '"');
         OUTPUT.append(" fill=\"none\"");
@@ -183,16 +210,18 @@ public class SvgPainter implements GraphPainter{
 
         CLIPPING = true;
         clip = new Rectangle(x,y,w,h);
-        OUTPUT.append("<clipPath id=\"graphRegion\">\n");
-        OUTPUT.append(MessageFormat.format("<rect x=\"{0}\" y=\"{1}\" width=\"{2}\" height=\"{3}\"\n" +
+        OUTPUT.append("<defs>\n");
+        OUTPUT.append("    <clipPath id=\"graphRegion\">\n");
+        OUTPUT.append(MessageFormat.format("    <rect x=\"{0}\" y=\"{1}\" width=\"{2}\" height=\"{3}\"\n" +
                 "        fill=\"none\" stroke=\"none\"/>", x, y, w, h));
-        OUTPUT.append("</clipPath>\n");
+        OUTPUT.append("    </clipPath>\n");
+        OUTPUT.append("</defs>");
         OUTPUT.append("<g clip-path=\"url(#graphRegion)\">\n");
 
     }
 
-    public void drawString(String s, int x, int y) {
-        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\">{2}</text>", x, y, s);
+    public void drawString(String s, double x, double y) {
+        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\">{2}</text>\n", x, y, s);
         OUTPUT.append(tag);
     }
 

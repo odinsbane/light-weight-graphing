@@ -291,6 +291,8 @@ class DataSetRow{
     ColorSelector color_selector;
     JTextField label;
     JTextField line_width;
+    JTextField point_size;
+    JTextField point_weight;
 
     public DataSetRow(DataSet set){
         points = GraphPoints.getGraphPoints();
@@ -300,12 +302,14 @@ class DataSetRow{
 
         String t = set.label==null?"":set.label;
         label = new JTextField(t);
-        GraphFormatWindow.sizeComponent(label, 100, 40);
+        GraphFormatWindow.sizeComponent(label, 100, 25);
 
         panel.add(label);
 
-        line_width = new JTextField(String.format("%2.2f",set.getLineWidth()));
-        GraphFormatWindow.sizeComponent(line_width,60,40);
+        JLabel lw_label = new JLabel("Line Width: ");
+        panel.add(lw_label);
+        line_width = new JTextField(String.format("%2.1f",set.getLineWidth()));
+        GraphFormatWindow.sizeComponent(line_width,50,25);
         panel.add(line_width);
 
         this.set = set;
@@ -326,6 +330,19 @@ class DataSetRow{
             public void mouseEntered(MouseEvent e) {            }
             public void mouseExited(MouseEvent e) {            }
         });
+
+        JLabel ps_label = new JLabel("Point Size: ");
+        panel.add(ps_label);
+
+        point_size = new JTextField(String.format("%2.1f",set.getPointSize()));
+        GraphFormatWindow.sizeComponent(point_size, 50, 25);
+        panel.add(point_size);
+
+        JLabel pw_label = new JLabel("Point Weight: ");
+        panel.add(pw_label);
+        point_weight = new JTextField(String.format("%2.1f",set.getPointWeight()));
+        GraphFormatWindow.sizeComponent(point_weight, 50, 25);
+        panel.add(point_weight);
 
         color_selector = new ColorSelector(set.COLOR);
         panel.add(color_selector);
@@ -351,6 +368,7 @@ class DataSetRow{
 
                     public void actionPerformed(ActionEvent e) {
                         color_selector.setColor(chooser.getColor());
+                        point_selector.setColor(chooser.getColor());
                         dialog.setVisible(false);
                     }
                 });
@@ -376,7 +394,28 @@ class DataSetRow{
 
     void updateSet(){
         set.setPoints(point_selector.getPoints());
+        try{
+
+            double d = Double.parseDouble(point_size.getText());
+            set.setPointSize(d);
+
+        }catch(NumberFormatException ex){
+            ex.printStackTrace();
+            System.out.println("Invalid Point Size");
+        }
+
+        try{
+            double d = Double.parseDouble(point_weight.getText());
+            set.setPointWeight(d);
+        }catch(NumberFormatException ex){
+            ex.printStackTrace();
+            System.out.println("Invalid Line Width");
+        }
+
+
         set.setColor(color_selector.getColor());
+
+
         String l = label.getText().trim();
         if(l.isEmpty()){
             set.label=null;
@@ -397,10 +436,13 @@ class DataSetRow{
                 //update existing line
                 set.setLineWidth(d);
             }
+
         } catch(NumberFormatException ex){
             ex.printStackTrace();
             System.out.println("Invalid Line Width");
         }
+
+
 
     }
 
@@ -441,6 +483,11 @@ class PointSelector extends JPanel{
 
     public GraphPoints getPoints(){
         return pts;
+    }
+
+    public void setColor(Color c){
+        color=c;
+        repaint();
     }
 
 

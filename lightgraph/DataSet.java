@@ -18,7 +18,6 @@ public class DataSet implements Iterable<Point2D>{
     public GraphPoints POINTS;
     GraphLine LINE;
     ArrayList<Point2D> DATA;
-    public PlotType p;
     public String label;
     public DataSet(double[] x, double[] y){
 
@@ -31,7 +30,6 @@ public class DataSet implements Iterable<Point2D>{
         for(int i = 0; i<x.length; i++)
             DATA.add(new Point2D.Double(x[i],y[i]));
 
-        p = PlotType.linespoints;
     }
 
     public void setColor(Color c){
@@ -41,29 +39,16 @@ public class DataSet implements Iterable<Point2D>{
 
     public void setLine(GraphLine l){
         LINE = l;
-        setType();
     }
 
     public void setPoints(GraphPoints p){
         POINTS = p;
-        setType();
     }
 
     public void addPoint(double x, double y){
         DATA.add(new Point2D.Double(x,y));
     }
-    /**
-     * Resets the current 'type' of this dataset for the appropriate
-     * data contained w/in.
-     */
-    public void setType(){
-        if(LINE!=null && POINTS==null){
-            p = PlotType.lines;
-        }else if(LINE==null){
-            p = PlotType.points;
-        } else
-            p = PlotType.linespoints;
-    }
+
 
     public Iterator<Point2D> iterator(){
         return DATA.iterator();
@@ -94,12 +79,36 @@ public class DataSet implements Iterable<Point2D>{
         }
     }
     public void setLineWidth(double d){
+        if(LINE==null) return;
+
         LINE.setLineWidth(d);
     }
-}
 
-enum PlotType{
-    points,
-    lines,
-    linespoints;
+    public double getPointSize(){
+        if(POINTS==null){
+            return 0;
+        } else{
+            return POINTS.SIZE;
+        }
+    }
+
+    public void setPointSize(double d){
+        if(POINTS==null) return;
+
+        POINTS.setSize(d);
+    }
+
+    public double getPointWeight(){
+        if(POINTS==null){
+            return 0;
+        } else{
+            return POINTS.WEIGHT;
+        }
+    }
+
+    public void setPointWeight(double d){
+        if(POINTS==null) return;
+
+        POINTS.setWeight(d);
+    }
 }
