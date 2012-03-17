@@ -119,7 +119,7 @@ public abstract class GraphPoints {
         GraphPoints gp = new GraphPoints(){
             RectangularShape shape = new Ellipse2D.Double(0,0,2, 2);
             public void drawPoint(Point2D pt, GraphPainter painter){
-                shape.setFrame(pt.getX()-1, pt.getY() - 1,2, 2);
+                shape.setFrame(pt.getX()-1, pt.getY() - 1,2*WEIGHT, 2*WEIGHT);
                 painter.fill(shape);
             }
 
@@ -160,18 +160,17 @@ public abstract class GraphPoints {
 
         GraphPoints gp = new GraphPoints(){
             GeneralPath shape;
-            AffineTransform at;
-            {
-                shape=new GeneralPath();
-                shape.moveTo(0,-SIZE);
-                shape.lineTo(Math.sqrt(3)*0.5*SIZE, 0.5*SIZE);
-                shape.lineTo(-Math.sqrt(3)*0.5*SIZE,  0.5*SIZE);
-                shape.closePath();
-                at = new AffineTransform();
-            }
+
             public void drawPoint(Point2D pt, GraphPainter painter){
-                at.setToTranslation(pt.getX(), pt.getY());
-                shape.transform(at);
+                double x = pt.getX();
+                double y = pt.getY();
+
+                shape=new GeneralPath();
+                shape.moveTo(x,y-SIZE);
+                shape.lineTo(Math.sqrt(3)*0.5*SIZE + x, 0.5*SIZE + y);
+                shape.lineTo(-Math.sqrt(3)*0.5*SIZE + x,  0.5*SIZE + y);
+                shape.closePath();
+
                 painter.fill(shape);
 
                 //store color for undoing.
@@ -184,10 +183,7 @@ public abstract class GraphPoints {
                 //undo color change.
                 painter.setColor(c);
 
-                //undo translation.
-                at.setToTranslation(-pt.getX(), -pt.getY());
-                shape.transform(at);
-            }
+                            }
 
         };
 
@@ -200,25 +196,21 @@ public abstract class GraphPoints {
 
         GraphPoints gp = new GraphPoints(){
             GeneralPath shape;
-            AffineTransform at;
-            {
-                shape=new GeneralPath();
-                shape.moveTo(0,-SIZE);
-                shape.lineTo(Math.sqrt(3)*0.5*SIZE, 0.5*SIZE);
-                shape.lineTo(-Math.sqrt(3)*0.5*SIZE,  0.5*SIZE);
-                shape.closePath();
-                at = new AffineTransform();
-            }
+
             public void drawPoint(Point2D pt, GraphPainter painter){
-                at.setToTranslation(pt.getX(), pt.getY());
-                shape.transform(at);
+                double x = pt.getX();
+                double y = pt.getY();
+
+                shape=new GeneralPath();
+                shape.moveTo(x,y-SIZE);
+                shape.lineTo(Math.sqrt(3)*0.5*SIZE + x, 0.5*SIZE + y);
+                shape.lineTo(-Math.sqrt(3)*0.5*SIZE + x,  0.5*SIZE + y);
+                shape.closePath();
 
                 painter.setLineWidth(WEIGHT);
                 painter.drawPath(shape);
                 painter.restoreLineWidth();
 
-                at.setToTranslation(-pt.getX(), -pt.getY());
-                shape.transform(at);
             }
 
         };
@@ -234,21 +226,22 @@ public abstract class GraphPoints {
             GeneralPath shape;
             AffineTransform at;
             {
-                shape=new GeneralPath();
-                shape.moveTo(0,-SIZE);
-                shape.lineTo(Math.sqrt(3)*0.5*SIZE, 0.5*SIZE);
-                shape.lineTo(-Math.sqrt(3)*0.5*SIZE,  0.5*SIZE);
-                shape.closePath();
+
                 at = new AffineTransform();
             }
             public void drawPoint(Point2D pt, GraphPainter painter){
-                at.setToTranslation(pt.getX(), pt.getY());
-                shape.transform(at);
+                double x = pt.getX();
+                double y = pt.getY();
+
+                shape=new GeneralPath();
+                shape.moveTo(x,y-SIZE);
+                shape.lineTo(Math.sqrt(3)*0.5*SIZE + x, 0.5*SIZE + y);
+                shape.lineTo(-Math.sqrt(3)*0.5*SIZE + x,  0.5*SIZE + y);
+                shape.closePath();
+
                 painter.fill(shape);
 
-                //move shape back to origin.
-                at.setToTranslation(-pt.getX(), -pt.getY());
-                shape.transform(at);
+
             }
 
         };

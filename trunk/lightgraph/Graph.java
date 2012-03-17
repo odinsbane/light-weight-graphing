@@ -35,7 +35,9 @@ public class Graph {
     boolean YLABEL;
     boolean GRID;
     boolean XTICS;
+    int XTIC_COUNT;
     boolean YTICS;
+    int YTIC_COUNT;
     boolean TITLE;
     public double MINX;
     public double MINY;
@@ -82,7 +84,9 @@ public class Graph {
 
 
         XTICS = true;
+        XTIC_COUNT = 7;
         YTICS = true;
+        YTIC_COUNT = 5;
 
         img = new BufferedImage(CWIDTH,CHEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics g = img.getGraphics();
@@ -92,6 +96,8 @@ public class Graph {
         SCALE=false;
         AXIS_COLOR = Color.BLACK;
         BACKGROUND = Color.WHITE;
+
+
 
     }
     public Graph(double[] x, double[] y){
@@ -275,9 +281,9 @@ public class Graph {
      * @param t
      */
     public void drawYTics(GraphPainter p, AffineTransform t){
-        double delta = (MAXY - MINY)/4;
+        double delta = (MAXY - MINY)/(YTIC_COUNT-1);
 
-        for(int i = 0; i<5; i++){
+        for(int i = 0; i<YTIC_COUNT; i++){
             double ynot = MINY + i*delta;
             double xnot = MINX;
             Point2D pt = new Point2D.Double(xnot,ynot);
@@ -302,9 +308,9 @@ public class Graph {
      * @param t
      */
     public void drawXTics(GraphPainter p, AffineTransform t){
-        double delta = (MAXX - MINX)/6;
+        double delta = (MAXX - MINX)/(XTIC_COUNT-1);
 
-        for(int i = 0; i<7; i++){
+        for(int i = 0; i<XTIC_COUNT; i++){
             double ynot = MINY;
             double xnot = MINX + delta*i;
             Point2D pt = new Point2D.Double(xnot,ynot);
@@ -387,12 +393,12 @@ public class Graph {
     public void createTics(){
 
         if(XTICS){
-            double delta = (MAXX - MINX)/6;
-            xtics = new String[7];
+            double delta = (MAXX - MINX)/(XTIC_COUNT-1);
+            xtics = new String[XTIC_COUNT];
             //add padding to the right side of the graph due to overflow of x-tic label.
             int x_overflow = 0;
 
-            for(int i = 0; i<7; i++){
+            for(int i = 0; i<XTIC_COUNT; i++){
                 double xnot = MINX + delta*i;
 
                 String value = MessageFormat.format("{0}",xnot);
@@ -406,10 +412,10 @@ public class Graph {
         }
 
         if(YTICS){
-            double delta = (MAXY - MINY)/4;
-            ytics = new String[5];
+            double delta = (MAXY - MINY)/(YTIC_COUNT-1);
+            ytics = new String[YTIC_COUNT];
             int ytics_width = 0;
-            for(int i = 0; i<5; i++){
+            for(int i = 0; i<YTIC_COUNT; i++){
                 double ynot = MINY + i*delta;
 
                 String value = MessageFormat.format("{0}", ynot);
@@ -639,6 +645,32 @@ public class Graph {
 
     }
 
+    public void setYTicCount(int c){
+        if(c==0){
+            YTICS=false;
+        } else{
+            YTICS=true;
+        }
+        YTIC_COUNT = c;
+
+    }
+
+    public void setXTicCount(int c){
+        XTIC_COUNT = c;
+        if(c==0){
+            XTICS=false;
+        } else{
+            XTICS=true;
+        }
+    }
+
+    public int getXTicCount(){
+        return XTIC_COUNT;
+    }
+
+    public int getYTicCount(){
+        return YTIC_COUNT;
+    }
 
  
 }
