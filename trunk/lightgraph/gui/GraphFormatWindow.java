@@ -31,7 +31,7 @@ public class GraphFormatWindow{
 
     JTextField xrange_low, xrange_high, yrange_low, yrange_high;
     JTextField width, height;
-    JTextField font_size;
+    JTextField font_size, x_tics, y_tics;
     final JFrame frame = new JFrame("graph format window");
     ArrayList<DataSetRow> datasets = new ArrayList<DataSetRow>();
     JPanel dataset_pane;
@@ -60,6 +60,19 @@ public class GraphFormatWindow{
         rowlist.add(height);
 
         content.add(createRow(rowlist));
+
+        rowlist.add(new JLabel("X-TICS: "));
+        x_tics = new JTextField("" + graph.getXTicCount());
+        sizeComponent(x_tics,40,20);
+        rowlist.add(x_tics);
+
+        rowlist.add(new JLabel("Y-TICS: "));
+        y_tics = new JTextField("" + graph.getYTicCount());
+        sizeComponent(y_tics,40,20);
+        rowlist.add(y_tics);
+
+        content.add(createRow(rowlist));
+
 
         rowlist.add(new JLabel("Font Size:"));
         font_size = new JTextField();
@@ -192,6 +205,21 @@ public class GraphFormatWindow{
         graph.CWIDTH = (int)Double.parseDouble(width.getText());
         graph.panel.setBounds(0,0,graph.CWIDTH, graph.CHEIGHT);
 
+        try{
+            int i = Integer.parseInt(x_tics.getText());
+            graph.setXTicCount(i);
+        }catch(NumberFormatException exc){
+            System.out.println("x-tics invalid");
+            exc.printStackTrace();
+        }
+
+        try{
+            int i = Integer.parseInt(y_tics.getText());
+            graph.setYTicCount(i);
+        }catch(NumberFormatException exc){
+            System.out.println("y-tics invalid");
+            exc.printStackTrace();
+        }
         for(DataSetRow row: datasets){
 
             row.updateSet();
