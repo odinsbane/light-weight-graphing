@@ -226,7 +226,6 @@ public class SvgPainter implements GraphPainter{
     }
 
     public void finish(File f){
-        System.out.println("finsihed");
         if(CLIPPING)
             OUTPUT.append("</g>\n");
         OUTPUT.append("</svg>");
