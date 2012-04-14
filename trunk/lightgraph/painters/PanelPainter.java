@@ -12,17 +12,24 @@ public class PanelPainter implements GraphPainter{
 
     Graphics2D g;
     final Stroke default_stroke;
+    Color BACKGROUND;
+    private boolean FILL = false;
+    float dashes[];
+    float width;
 
-    public PanelPainter(Graphics2D g){
+    public PanelPainter(Graphics2D g, Color background){
         this.g = g;
         default_stroke = g.getStroke();
-    }
-    public void drawEllipse(Shape s){
-        g.draw(s);
+        BACKGROUND = background;
     }
 
     public void drawPath(Shape s){
-
+        if(FILL){
+            Color fore = g.getColor();
+            g.setColor(BACKGROUND);
+            g.fill(s);
+            g.setColor(fore);
+        }
         g.draw(s);
 
     }
@@ -52,14 +59,42 @@ public class PanelPainter implements GraphPainter{
     }
 
     public void setLineWidth(double width){
-        Stroke s = new BasicStroke((float)width);
-        g.setStroke(s);
-
+        this.width = (float)width;
+        updateStroke();
     }
 
+    /**
+     * Not implemented yet
+     * @param dashes
+     */
+    public void setDashes(float[] dashes){
+        this.dashes = dashes;
+        updateStroke();
+    }
+
+    void updateStroke(){
+        if(dashes==null){
+            Stroke s = new BasicStroke(width);
+            g.setStroke(s);
+        } else{
+            Stroke s = new BasicStroke(
+                    width,
+                    BasicStroke.CAP_BUTT, BasicStroke.JOIN_ROUND,1f,
+                    dashes, 0);
+            g.setStroke(s);
+        }
+
+
+    }
     public void restoreLineWidth(){
         g.setStroke(default_stroke);
     }
 
+    /**
+     * For filling shapes with background color.
+     */
+    public void setFill(boolean fill){
+        FILL = fill;
+    }
 
 }

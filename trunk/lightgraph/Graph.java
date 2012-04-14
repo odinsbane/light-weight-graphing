@@ -47,7 +47,7 @@ public class Graph {
     double YTICS_WIDTH = 30;
     double XTICS_HEIGHT = 20;
     double TITLE_HEIGHT=0;
-    double FONT_HEIGHT = 20;
+    double FONT_HEIGHT = 12;
 
     double LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN;
 
@@ -59,6 +59,7 @@ public class Graph {
     public int CHEIGHT;
     public int CWIDTH;
 
+    double KEY_X, KEY_Y;
 
     Color AXIS_COLOR, BACKGROUND;
     BufferedImage img;
@@ -82,6 +83,8 @@ public class Graph {
         CHEIGHT = 480;
         CWIDTH = 640;
 
+        KEY_X = 100;
+        KEY_Y = 30;
 
         XTICS = true;
         XTIC_COUNT = 7;
@@ -169,7 +172,7 @@ public class Graph {
         IMAGE_LOCK.get();
         BufferedImage image = new BufferedImage(CWIDTH,CHEIGHT, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = image.createGraphics();
-        resetGraph(new PanelPainter(g));
+        resetGraph(new PanelPainter(g, BACKGROUND));
         g.dispose();
         img = image;
         IMAGE_LOCK.release();
@@ -200,15 +203,15 @@ public class Graph {
         }
 
         if(XLABEL){
-            LEFT_MARGIN += FONT_HEIGHT;
+            LEFT_MARGIN += FONT_HEIGHT*1.2;
         }
         if(YLABEL){
-            BOTTOM_MARGIN += FONT_HEIGHT;
+            BOTTOM_MARGIN += FONT_HEIGHT*1.2;
         }
 
         if(TITLE){
 
-            TOP_MARGIN += FONT_HEIGHT;
+            TOP_MARGIN += FONT_HEIGHT*1.2;
 
         }
 
@@ -250,14 +253,19 @@ public class Graph {
         for(DataSet set: DATASETS){
 
             if(set.label!=null){
+                double top = KEY_Y + FONT_HEIGHT*1.4*count;
+                double left = CWIDTH - KEY_X;
                 p.setColor(AXIS_COLOR);
-                p.drawString(set.label, CWIDTH - 100, 30 + count*15);
+                p.drawString(set.label, left + 50, top);
                 p.setColor(set.COLOR);
                 ArrayList<Point2D> pts = new ArrayList<Point2D>();
-                pts.add(new Point2D.Double(CWIDTH - 140, 24 + count*15));
-                pts.add(new Point2D.Double(CWIDTH - 110, 24 + count*15));
 
-                Point2D middle = new Point2D.Double(CWIDTH - 125, 24 + count*15);
+                double mark_y = top - FONT_HEIGHT*0.4;
+
+                pts.add(new Point2D.Double(left + 5, mark_y));
+                pts.add(new Point2D.Double(left + 45, mark_y));
+
+                Point2D middle = new Point2D.Double(left+25, mark_y);
 
                 if(set.LINE!=null){
                     set.LINE.drawLine(pts, p);
@@ -672,6 +680,40 @@ public class Graph {
         return YTIC_COUNT;
     }
 
+    public void setBackground(Color c){
+        BACKGROUND = c;
+    }
+
+    public Color getBackground(){
+        return BACKGROUND;
+    }
+
+    /**
+     * Sets the distance from the right edge of the graph for the top left
+     * cornder of the key.
+     *
+     * @param x distance from right edge of graph.
+     */
+    public void setKeyX(double x){
+        KEY_X = x;
+    }
+
+    /**
+     * Sets the distance from the top of the graph to the top of the key.
+     * @param y
+     */
+    public void setKeyY(double y){
+        KEY_Y = y;
+    }
+
+
+    public double getKeyX(){
+        return KEY_X;
+    }
+
+    public double getKeyY(){
+        return KEY_Y;
+    }
  
 }
 

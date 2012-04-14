@@ -16,7 +16,7 @@ import java.util.Iterator;
 public class DataSet implements Iterable<Point2D>{
     public Color COLOR;
     public GraphPoints POINTS;
-    GraphLine LINE;
+    public GraphLine LINE;
     ArrayList<Point2D> DATA;
     public String label;
     public DataSet(double[] x, double[] y){

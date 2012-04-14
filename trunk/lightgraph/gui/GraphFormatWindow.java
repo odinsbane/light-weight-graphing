@@ -32,6 +32,7 @@ public class GraphFormatWindow{
     JTextField xrange_low, xrange_high, yrange_low, yrange_high;
     JTextField width, height;
     JTextField font_size, x_tics, y_tics;
+    JTextField key_x, key_y;
     final JFrame frame = new JFrame("graph format window");
     ArrayList<DataSetRow> datasets = new ArrayList<DataSetRow>();
     JPanel dataset_pane;
@@ -76,8 +77,20 @@ public class GraphFormatWindow{
 
         rowlist.add(new JLabel("Font Size:"));
         font_size = new JTextField();
+        font_size.setText("not impl.");
+        font_size.setEnabled(false);
         rowlist.add(font_size);
         sizeComponent(font_size,80,20);
+
+        rowlist.add(new JLabel("Key X"));
+        key_x = new JTextField();
+        rowlist.add(key_x);
+        sizeComponent(key_x,80,20);
+
+        rowlist.add(new JLabel("Key Y"));
+        key_y = new JTextField();
+        rowlist.add(key_y);
+        sizeComponent(key_y,80,20);
 
         content.add(createRow(rowlist));
         
@@ -205,21 +218,19 @@ public class GraphFormatWindow{
         graph.CWIDTH = (int)Double.parseDouble(width.getText());
         graph.panel.setBounds(0,0,graph.CWIDTH, graph.CHEIGHT);
 
-        try{
-            int i = Integer.parseInt(x_tics.getText());
-            graph.setXTicCount(i);
-        }catch(NumberFormatException exc){
-            System.out.println("x-tics invalid");
-            exc.printStackTrace();
-        }
 
-        try{
-            int i = Integer.parseInt(y_tics.getText());
-            graph.setYTicCount(i);
-        }catch(NumberFormatException exc){
-            System.out.println("y-tics invalid");
-            exc.printStackTrace();
-        }
+        int i = Integer.parseInt(x_tics.getText());
+        graph.setXTicCount(i);
+
+        i = Integer.parseInt(y_tics.getText());
+        graph.setYTicCount(i);
+
+        double d = Double.parseDouble(key_x.getText());
+        graph.setKeyX(d);
+
+        d = Double.parseDouble(key_y.getText());
+        graph.setKeyY(d);
+
         for(DataSetRow row: datasets){
 
             row.updateSet();
@@ -231,8 +242,86 @@ public class GraphFormatWindow{
     }
 
     boolean validateInputs(){
+        boolean r = validateDoubleField(xrange_high);
+        r &= validateDoubleField(yrange_low);
+        r &= validateDoubleField(yrange_high);
+        r &= validateDoubleField(xrange_low);
+        r &= validateDoubleField(width, 0);
+        r &= validateDoubleField(height, 0);
+        r &= validateDoubleField(key_x, 0);
+        r &= validateDoubleField(key_y, 0);
+        r &= validateIntField(x_tics);
+        r &= validateIntField(y_tics);
+
+        for(DataSetRow s: datasets){
+            r&=validateDoubleField(s.line_width, 0);
+            r&=validateDoubleField(s.point_size, 0);
+            r&=validateDoubleField(s.point_weight, 0);
+        }
+
+
+        return r;
+    }
+
+    boolean validateDoubleField(JTextField t){
+        if(!t.isEnabled()){
+            return true;
+        }
+        try{
+
+            Double.parseDouble(t.getText());
+            t.setBackground(Color.WHITE);
+
+        } catch(NumberFormatException exc){
+            exc.printStackTrace();
+            t.setBackground(Color.RED);
+            return false;
+
+        }
+
         return true;
     }
+
+    boolean validateDoubleField(JTextField t, double min){
+        if(!t.isEnabled()){
+            return true;
+        }
+        try{
+
+            double d = Double.parseDouble(t.getText());
+            if(d<min) throw new NumberFormatException(String.format("values less than %f are not acceptable.",min));
+            t.setBackground(Color.WHITE);
+
+        } catch(NumberFormatException exc){
+            exc.printStackTrace();
+            t.setBackground(Color.RED);
+            return false;
+
+        }
+
+        return true;
+    }
+
+    boolean validateIntField(JTextField t){
+        if(!t.isEnabled()){
+            return true;
+        }
+        try{
+
+            int d = Integer.parseInt(t.getText());
+            if(d<0) throw new NumberFormatException("values less than zero are not acceptable.");
+            t.setBackground(Color.WHITE);
+
+        } catch(NumberFormatException exc){
+            exc.printStackTrace();
+            t.setBackground(Color.RED);
+            return false;
+
+        }
+
+        return true;
+    }
+
     public static void sizeComponent(Component c, int width, int height){
 
         Dimension d = new Dimension(width,height);
@@ -284,6 +373,9 @@ public class GraphFormatWindow{
         height.setText(String.valueOf(graph.CHEIGHT));
         width.setText(String.valueOf(graph.CWIDTH));
 
+        key_x.setText(String.format("%.2f",graph.getKeyX()));
+        key_y.setText(String.format("%.2f",graph.getKeyY()));
+
         createDataSetRows();
 
     }
@@ -301,7 +393,7 @@ public class GraphFormatWindow{
         }
         for(DataSet set: sets){
 
-            DataSetRow row = new DataSetRow(set);
+            DataSetRow row = new DataSetRow(set, graph);
             dataset_pane.add(row.panel);
             datasets.add(row);
 
@@ -314,17 +406,23 @@ public class GraphFormatWindow{
 class DataSetRow{
     DataSet set;
     List<GraphPoints> points;
+    List<GraphLine> lines;
     JPanel panel;
     PointSelector point_selector;
+    LineSelector line_selector;
     ColorSelector color_selector;
     JTextField label;
     JTextField line_width;
     JTextField point_size;
     JTextField point_weight;
 
-    public DataSetRow(DataSet set){
+    public DataSetRow(DataSet set, Graph graph){
         points = GraphPoints.getGraphPoints();
         points.add(null);
+
+        lines = GraphLine.getLines();
+        lines.add(null);
+
         panel = new JPanel();
         panel.setLayout(new BoxLayout(panel,BoxLayout.LINE_AXIS));
 
@@ -341,7 +439,26 @@ class DataSetRow{
         panel.add(line_width);
 
         this.set = set;
-        point_selector = new PointSelector(set.POINTS, set.COLOR);
+
+        line_selector = new LineSelector(set.LINE, set.COLOR, graph.getBackground());
+        panel.add(line_selector);
+        line_selector.addMouseListener(new MouseListener(){
+            int index = 0;
+            public void mouseClicked(MouseEvent e) {
+                index++;
+                if(index>=lines.size()){
+                    index = 0;
+                }
+                line_selector.setLine(lines.get(index));
+            }
+
+            public void mousePressed(MouseEvent e) {            }
+            public void mouseReleased(MouseEvent e) {            }
+            public void mouseEntered(MouseEvent e) {            }
+            public void mouseExited(MouseEvent e) {            }
+        });
+
+        point_selector = new PointSelector(set.POINTS, set.COLOR, graph.getBackground());
         panel.add(point_selector);
         point_selector.addMouseListener(new MouseListener(){
             int index = 0;
@@ -358,6 +475,8 @@ class DataSetRow{
             public void mouseEntered(MouseEvent e) {            }
             public void mouseExited(MouseEvent e) {            }
         });
+
+
 
         JLabel ps_label = new JLabel("Point Size: ");
         panel.add(ps_label);
@@ -397,6 +516,7 @@ class DataSetRow{
                     public void actionPerformed(ActionEvent e) {
                         color_selector.setColor(chooser.getColor());
                         point_selector.setColor(chooser.getColor());
+                        line_selector.setColor(chooser.getColor());
                         dialog.setVisible(false);
                     }
                 });
@@ -422,23 +542,16 @@ class DataSetRow{
 
     void updateSet(){
         set.setPoints(point_selector.getPoints());
-        try{
 
-            double d = Double.parseDouble(point_size.getText());
-            set.setPointSize(d);
 
-        }catch(NumberFormatException ex){
-            ex.printStackTrace();
-            System.out.println("Invalid Point Size");
-        }
+        double d = Double.parseDouble(point_size.getText());
+        set.setPointSize(d);
 
-        try{
-            double d = Double.parseDouble(point_weight.getText());
-            set.setPointWeight(d);
-        }catch(NumberFormatException ex){
-            ex.printStackTrace();
-            System.out.println("Invalid Line Width");
-        }
+
+        d = Double.parseDouble(point_weight.getText());
+        set.setPointWeight(d);
+
+
 
 
         set.setColor(color_selector.getColor());
@@ -451,28 +564,22 @@ class DataSetRow{
             set.label = l;
         }
 
-        try{
-            double d = Double.parseDouble(line_width.getText());
-            if(d==0){
-                //turn off line
-                set.setLine(null);
-            } else if(set.getLineWidth()==0){
-                //add a line
-                set.setLine(GraphLine.solidLine());
-                set.setLineWidth(d);
-            } else {
-                //update existing line
-                set.setLineWidth(d);
-            }
 
-        } catch(NumberFormatException ex){
-            ex.printStackTrace();
-            System.out.println("Invalid Line Width");
+        set.setLine(line_selector.getLine());
+
+        d = Double.parseDouble(line_width.getText());
+        if(d==0||line_selector.getLine()==null){
+            //turn off line
+            set.setLine(null);
+        } else {
+            //update existing line
+            set.setLineWidth(d);
         }
 
 
-
     }
+
+
 
     DataSet getSet(){
         return set;
@@ -483,23 +590,24 @@ class PointSelector extends JPanel{
     Dimension d = new Dimension(40,40);
     Point2D center = new Point2D.Double(20,20);
     GraphPoints pts;
-    Color color;
-    PointSelector(GraphPoints pts, Color c){
+    Color color,background;
+    PointSelector(GraphPoints pts, Color fore, Color back){
         super();
         setMaximumSize(d);
         setMinimumSize(d);
         setPreferredSize(d);
-        color = c;
+        color = fore;
+        background = back;
         this.pts = pts;
     }
 
     public void paintComponent(Graphics g){
-        g.setColor(Color.WHITE);
+        g.setColor(background);
         g.fillRect(0,0,(int)d.getWidth(), (int)d.getHeight());
         g.setColor(Color.BLACK);
         g.drawRect(0,0,(int)d.getWidth()-1, (int)d.getHeight()-1);
         g.setColor(color);
-        GraphPainter painter = new PanelPainter((Graphics2D)g);
+        GraphPainter painter = new PanelPainter((Graphics2D)g, background);
         if(pts!=null) pts.drawPoint(center, painter);
 
     }
@@ -520,6 +628,57 @@ class PointSelector extends JPanel{
 
 
 }
+
+class LineSelector extends JPanel{
+    Dimension d = new Dimension(80,40);
+    ArrayList<Point2D> sample;
+    Point2D start = new Point2D.Double(20,20);
+    Point2D end = new Point2D.Double(60,20);
+    GraphLine line;
+    Color color,background;
+    LineSelector(GraphLine l, Color fore, Color back){
+        super();
+        setMaximumSize(d);
+        setMinimumSize(d);
+        setPreferredSize(d);
+        color = fore;
+        background = back;
+        this.line = l;
+        sample = new ArrayList<Point2D>();
+        sample.add(start);
+        sample.add(end);
+    }
+
+    public void paintComponent(Graphics g){
+        g.setColor(background);
+        g.fillRect(0,0,(int)d.getWidth(), (int)d.getHeight());
+        g.setColor(Color.BLACK);
+        g.drawRect(0,0,(int)d.getWidth()-1, (int)d.getHeight()-1);
+        g.setColor(color);
+        GraphPainter painter = new PanelPainter((Graphics2D)g, background);
+        if(line!=null) {
+            line.drawLine(sample,painter);
+        }
+
+    }
+
+    public void setLine(GraphLine l){
+        line = l;
+        repaint();
+    }
+
+    public GraphLine getLine(){
+        return line;
+    }
+
+    public void setColor(Color c){
+        color=c;
+        repaint();
+    }
+
+
+}
+
 
 class ColorSelector extends JPanel{
     Dimension d = new Dimension(40,40);

@@ -15,7 +15,7 @@ import java.text.MessageFormat;
  * @author mbs207
  */
 public interface GraphPainter {
-    public void drawEllipse(Shape s);
+    //public void drawEllipse(Shape s);
     public void drawPath(Shape s);
     public void setColor(Color c);
     public Color getColor();
@@ -25,4 +25,6 @@ public interface GraphPainter {
     public void drawString(String s, double x, double y);
     public void setLineWidth(double f);
     public void restoreLineWidth();
+    public void setDashes(float[] dashes);
+    public void setFill(boolean fill);
 }
