@@ -46,8 +46,11 @@ public abstract class GraphPoints {
                 double leg = SIZE/2;
                 corner.setLocation(pt.getX() + leg, pt.getY() + leg);
                 bounds.setFrameFromCenter(pt,corner);
+
+                painter.setFill(true);
                 painter.drawPath(bounds);
                 painter.restoreLineWidth();
+                painter.setFill(false);
             }
 
         };
@@ -81,7 +84,7 @@ public abstract class GraphPoints {
         };
     }
 
-    static GraphPoints filledSquares(){
+    public static GraphPoints filledSquares(){
         return new GraphPoints(){
 
             Rectangle2D bounds = new Rectangle2D.Double(0,0,SIZE,SIZE);
@@ -101,14 +104,24 @@ public abstract class GraphPoints {
 
     static GraphPoints hollowDiamonds(){
         return new GraphPoints(){
-
+            GeneralPath shape;
             public void drawPoint(Point2D pt, GraphPainter painter){
                 double leg = SIZE/2;
 
-                painter.drawLine((int)pt.getX()-leg, (int)pt.getY(), (int)pt.getX(), (int)pt.getY()+leg);
-                painter.drawLine((int)pt.getX(), (int)pt.getY()+leg, (int)pt.getX()+leg, (int)pt.getY());
-                painter.drawLine((int)pt.getX()+leg, (int)pt.getY(), (int)pt.getX(), (int)pt.getY()-leg);
-                painter.drawLine((int)pt.getX(), (int)pt.getY()-leg, (int)pt.getX()-leg, (int)pt.getY());
+                shape = new GeneralPath();
+                shape.moveTo(pt.getX()-leg,pt.getY());
+                shape.lineTo(pt.getX(), pt.getY()+leg);
+                shape.lineTo(pt.getX()+leg, pt.getY());
+                shape.lineTo(pt.getX(),  pt.getY()-leg);
+                shape.closePath();
+
+                painter.setFill(true);
+                painter.setLineWidth(WEIGHT);
+
+                painter.drawPath(shape);
+
+                painter.restoreLineWidth();
+                painter.setFill(false);
 
             }
 
@@ -130,10 +143,12 @@ public abstract class GraphPoints {
         GraphPoints gp = new GraphPoints(){
             RectangularShape shape = new Ellipse2D.Double(0,0,SIZE, SIZE);
             public void drawPoint(Point2D pt, GraphPainter painter){
+                painter.setFill(true);
                 shape.setFrame(pt.getX() - SIZE/2, pt.getY() - SIZE/2,SIZE, SIZE);
                 painter.setLineWidth(WEIGHT);
-                painter.drawEllipse(shape);
+                painter.drawPath(shape);
                 painter.restoreLineWidth();
+                painter.setFill(false);
             }
 
         };
@@ -166,9 +181,9 @@ public abstract class GraphPoints {
                 double y = pt.getY();
 
                 shape=new GeneralPath();
-                shape.moveTo(x,y-SIZE);
-                shape.lineTo(Math.sqrt(3)*0.5*SIZE + x, 0.5*SIZE + y);
-                shape.lineTo(-Math.sqrt(3)*0.5*SIZE + x,  0.5*SIZE + y);
+                shape.moveTo(x,y-Math.sqrt(3)*0.25*SIZE);
+                shape.lineTo(0.5*SIZE + x, Math.sqrt(3)*0.25*SIZE + y);
+                shape.lineTo(-0.5*SIZE + x,  Math.sqrt(3)*0.25*SIZE + y);
                 shape.closePath();
 
                 painter.fill(shape);
@@ -201,14 +216,17 @@ public abstract class GraphPoints {
                 double x = pt.getX();
                 double y = pt.getY();
 
+
                 shape=new GeneralPath();
-                shape.moveTo(x,y-SIZE);
-                shape.lineTo(Math.sqrt(3)*0.5*SIZE + x, 0.5*SIZE + y);
-                shape.lineTo(-Math.sqrt(3)*0.5*SIZE + x,  0.5*SIZE + y);
+                shape.moveTo(x,y-Math.sqrt(3)*0.25*SIZE);
+                shape.lineTo(0.5*SIZE + x, Math.sqrt(3)*0.25*SIZE + y);
+                shape.lineTo(-0.5*SIZE + x,  Math.sqrt(3)*0.25*SIZE + y);
                 shape.closePath();
 
+                painter.setFill(true);
                 painter.setLineWidth(WEIGHT);
                 painter.drawPath(shape);
+                painter.setFill(false);
                 painter.restoreLineWidth();
 
             }
@@ -234,10 +252,11 @@ public abstract class GraphPoints {
                 double y = pt.getY();
 
                 shape=new GeneralPath();
-                shape.moveTo(x,y-SIZE);
-                shape.lineTo(Math.sqrt(3)*0.5*SIZE + x, 0.5*SIZE + y);
-                shape.lineTo(-Math.sqrt(3)*0.5*SIZE + x,  0.5*SIZE + y);
+                shape.moveTo(x,y-Math.sqrt(3)*0.25*SIZE);
+                shape.lineTo(0.5*SIZE + x, Math.sqrt(3)*0.25*SIZE + y);
+                shape.lineTo(-0.5*SIZE + x,  Math.sqrt(3)*0.25*SIZE + y);
                 shape.closePath();
+
 
                 painter.fill(shape);
 
@@ -250,7 +269,6 @@ public abstract class GraphPoints {
 
 
     }
-
     static public List<GraphPoints> getGraphPoints(){
         ArrayList<GraphPoints> points  = new ArrayList<GraphPoints>();
         points.add(crossPlus());

@@ -19,51 +19,37 @@ public class SvgPainter implements GraphPainter{
     Color COLOR;
     boolean CLIPPING = false;
     double LINE_WIDTH=1;
+    float[] DASHES;
     Rectangle clip;
+    String FILL="none";
+    Color BACKGROUND;
     static final String DOCTYPE = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
                 "  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     static final String XML = "<?xml version=\"1.0\" standalone=\"no\"?>\n";
-    static final String SVG_TAG = "<svg width=\"%.2fin\" height=\"%.2fin\" viewBox=\"0 0 %s %s\"\n"+
+    static final String SVG_TAG = "<svg width=\"%.2fpx\" height=\"%.2fpx\" viewBox=\"0 0 %s %s\"\n"+
                 "    xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\">\n";
-    public SvgPainter(int height, int width){
-        double aspect = 1.0/width*height;
-        double page_width = 6;
-        double page_height = page_width*aspect;
+
+    /**
+     * Creates a new svg painter,which will build a large string containing an svg file to be
+     * written to file when completed.
+     *
+     * @param height of output graph in px
+     * @param width of output graph in px
+     * @param background background color, primarily used for filling hollow strokes.
+     */
+    public SvgPainter(int height, int width, Color background){
+        //double aspect = 1.0/width*height;
+        //double page_width = width;
+        //double page_height = height;
         OUTPUT = new StringBuilder();
         OUTPUT.append(XML);
         OUTPUT.append(DOCTYPE);
-        String dec = String.format(SVG_TAG,page_width,page_height,width,height);
+        String dec = String.format(SVG_TAG,width*1f,height*1f,width,height);
         OUTPUT.append(dec);
-
+        BACKGROUND=background;
     }
 
-    public void drawEllipse(Shape s) {
 
-        Rectangle r = s.getBounds();
-        if(CLIPPING&&!r.intersects(clip))
-            return;
-        OUTPUT.append("    <ellipse");
-        OUTPUT.append(" cx=\"" + (r.getX() + r.getWidth()/2) + '"');
-        OUTPUT.append(" cy=\"" + (r.getY() + r.getHeight()/2) + '"');
-        OUTPUT.append(" rx=\"" + r.getWidth()/2 + '"');
-        OUTPUT.append(" ry=\"" + r.getHeight()/2 + '"');
-        String red = Integer.toString(COLOR.getRed(),16);
-        if(red.length()==1)
-            red = "0" + red;
-
-        String green = Integer.toString(COLOR.getGreen(),16);
-        if(green.length()==1)
-            green = "0" + green;
-
-        String blue = Integer.toString(COLOR.getBlue(),16);
-        if(blue.length()==1)
-            blue = "0" + blue;
-
-
-        OUTPUT.append(" stroke=\"#" + red + green + blue +'"');
-        OUTPUT.append(" fill=\"none\"");
-        OUTPUT.append(" stroke-width=\"1\" />\n");
-    }
     public static String svgColorString(Color c){
         String red = Integer.toString(c.getRed(),16);
         if(red.length()==1)
@@ -79,6 +65,12 @@ public class SvgPainter implements GraphPainter{
         return MessageFormat.format("#{0}{1}{2}", red, green, blue);
     }
 
+    /**
+     * For drawing arbitrary shapes, This will fill with the background color if
+     * fill is set to true.
+     *
+     * @param s shape to be drawn.
+     */
     public void drawPath(Shape s) {
         Rectangle r = s.getBounds();
 
@@ -87,7 +79,7 @@ public class SvgPainter implements GraphPainter{
 
         OUTPUT.append("<path d=\"\n");
         PathIterator pit = s.getPathIterator(null);
-        double[] p = new double[2];
+        double[] p = new double[6];
         while(!pit.isDone()){
             char c;
             int t = pit.currentSegment(p);
@@ -120,7 +112,20 @@ public class SvgPainter implements GraphPainter{
         }
         OUTPUT.append("\"");
         OUTPUT.append(" stroke=\"" + svgColorString(COLOR)  + '"');
-        OUTPUT.append(" fill=\"none\"");
+        if(DASHES!=null){
+            String dash = "";
+            int n = DASHES.length;
+            for(int i = 0; i<n; i++){
+                dash += DASHES[i];
+                if(i<n-1){
+                    dash += " ";
+                }
+
+            }
+            OUTPUT.append(" stroke-dasharray=\"" + dash + "\" ");
+
+        }
+        OUTPUT.append(MessageFormat.format(" fill=\"{0}\"",FILL));
         OUTPUT.append(String.format(" stroke-width=\"%f\" />\n",LINE_WIDTH));
 
     }
@@ -129,6 +134,14 @@ public class SvgPainter implements GraphPainter{
         COLOR = c;
     }
 
+    /**
+     * For drawing plain lines. Creates a line element.
+     *
+     * @param x0
+     * @param y0
+     * @param x1
+     * @param y1
+     */
     public void drawLine(double x0, double y0, double x1, double y1) {
         if(CLIPPING){
             double x,w;
@@ -158,10 +171,15 @@ public class SvgPainter implements GraphPainter{
         }
         OUTPUT.append(MessageFormat.format("<line x1=\"{0}\" y1=\"{1}\" x2=\"{2}\" y2=\"{3}\" ",x0,y0,x1,y1));
         OUTPUT.append(" stroke=\"" + svgColorString(COLOR)  + '"');
-        OUTPUT.append(" fill=\"none\"");
+        OUTPUT.append(MessageFormat.format(" fill=\"{0}\"",FILL));
         OUTPUT.append(String.format(" stroke-width=\"%f\" />\n",LINE_WIDTH));
     }
 
+    /**
+     * Filling an arbitrary shape with the forground color.
+     *
+     * @param s
+     */
     public void fill(Shape s) {
         Rectangle r = s.getBounds();
 
@@ -250,5 +268,22 @@ public class SvgPainter implements GraphPainter{
 
     public void restoreLineWidth(){
         LINE_WIDTH=1;
+    }
+
+    /**
+     *
+     *
+     * @param dashes length/offest combo's for formatting line dashes. set to null for none.
+     */
+    public void setDashes(float[] dashes){
+        DASHES = dashes;
+    }
+
+    public void setFill(boolean fill){
+        if(fill){
+            FILL=svgColorString(BACKGROUND);
+        } else{
+            FILL="none";
+        }
     }
 }
