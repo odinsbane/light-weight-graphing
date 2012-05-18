@@ -305,7 +305,6 @@ public class Graph {
             int y = (int)pt.getY();
 
             p.drawLine(x0,y,x1,y);
-            String value = MessageFormat.format("{0}", ynot);
 
             p.drawString(MessageFormat.format("{0}",ynot),x0-(int)YTICS_WIDTH,y + 5);
 
