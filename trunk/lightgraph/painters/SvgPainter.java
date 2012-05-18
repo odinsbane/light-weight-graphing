@@ -286,4 +286,12 @@ public class SvgPainter implements GraphPainter{
             FILL="none";
         }
     }
+
+    public void startGroup() {
+        OUTPUT.append("<g>\n");
+    }
+
+    public void endGroup() {
+        OUTPUT.append("</g>\n");
+    }
 }
