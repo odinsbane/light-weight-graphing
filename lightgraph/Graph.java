@@ -250,6 +250,7 @@ public class Graph {
     void drawKey(GraphPainter p){
 
         int count = 0;
+        p.startGroup();
         for(DataSet set: DATASETS){
 
             if(set.label!=null){
@@ -279,6 +280,7 @@ public class Graph {
 
 
         }
+        p.endGroup();
 
 
     }
@@ -351,14 +353,17 @@ public class Graph {
             set.LINE.drawLine(pts, painter);
         }
         if(set.POINTS!=null){
+            painter.startGroup();
             for(Point2D pt: pts)
                 set.POINTS.drawPoint(pt, painter);
+            painter.endGroup();
         }
 
 
     }
 
     public void drawBorder(GraphPainter p, AffineTransform transform){
+
         Point2D[] border = new Point2D[4];
         p.setColor(AXIS_COLOR);
         border[0] = new Point2D.Double(0,0);
