@@ -31,7 +31,7 @@ public class ForgetfulGraph extends Graph{
     public void resetGraph(){
         IMAGE_LOCK.get();
         Graphics2D g = img.createGraphics();
-        resetGraph(new PanelPainter(g));
+        resetGraph(new PanelPainter(g, BACKGROUND));
         g.dispose();
         IMAGE_LOCK.release();
     }
