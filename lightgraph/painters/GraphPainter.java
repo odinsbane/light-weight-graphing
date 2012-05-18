@@ -27,4 +27,6 @@ public interface GraphPainter {
     public void restoreLineWidth();
     public void setDashes(float[] dashes);
     public void setFill(boolean fill);
+    public void startGroup();
+    public void endGroup();
 }

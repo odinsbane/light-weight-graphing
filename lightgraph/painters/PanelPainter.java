@@ -97,4 +97,13 @@ public class PanelPainter implements GraphPainter{
         FILL = fill;
     }
 
+    /**
+     * No groups in java2D
+     */
+    public void startGroup() {
+    }
+
+    public void endGroup() {
+    }
+
 }
