@@ -147,13 +147,25 @@ public class LightGraphClient {
 
 
     private void addLine(){
-        LineEntryPanel lep = new LineEntryPanel(evaluator);
+        final LineEntryPanel lep = new LineEntryPanel(evaluator);
         line_panel.add(lep);
 
         line_entries.add(lep);
 
         line_panel.invalidate();
         house.validate();
+
+        lep.remove.addActionListener(new ActionListener(){
+
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                line_panel.remove(lep);
+                line_entries.remove(lep);
+                line_panel.invalidate();
+                house.validate();
+                house.repaint();
+            }
+        });
 
     }
 
@@ -165,7 +177,8 @@ public class LightGraphClient {
 
         for(LineEntryPanel lep: line_entries){
             double[][] data = createLineData(lep);
-            graph.addData(data[0], data[1]);
+            if(data!=null)
+                graph.addData(data[0], data[1]);
         }
 
         graph.show(false, "LightGraphClient - Graph");
@@ -175,6 +188,9 @@ public class LightGraphClient {
      * Creates the data, the set of x-y values that will be plotted. The number of
      * points will be the length of the the shortest column being used.
      *
+     * Returns null on failure, which occurs if the column number exceeds the
+     * number of columns.
+     *
      *
      * @param lep
      * @return double[2][n] where the first index is the x/y indicator and the
@@ -182,21 +198,74 @@ public class LightGraphClient {
      *                      the shortest data column in use.
      */
     private  double[][] createLineData(LineEntryPanel lep){
-        int[] columns = lep.getColumnsUsed();
+        double[][] evaluatedValues = new double[2][];
+        evaluator.startEvaluations();
+        LGExpression x_expression = lep.getXExpression();
+
+        double[] x_values = calculateColumn(x_expression);
+
+        if(x_values==null){
+            lep.invalidateXField();
+            return null;
+        }
+        LGExpression y_expression = lep.getYExpression();
+
+        double[] y_values = calculateColumn(y_expression);
+
+        if(y_values==null){
+            lep.invalidateYField();
+            return null;
+        }
+
+        int len = x_values.length<y_values.length?x_values.length:y_values.length;
+
+        if(x_values.length==len){
+            evaluatedValues[0] = x_values;
+        } else{
+            evaluatedValues[0] = new double[len];
+            System.arraycopy(x_values,0,evaluatedValues[0],0,len);
+        }
+
+        if(y_values.length==len){
+            evaluatedValues[1] = y_values;
+        } else{
+            evaluatedValues[1] = new double[len];
+            System.arraycopy(y_values,0,evaluatedValues[1],0,len);
+        }
+
+        return evaluatedValues;
+
+    }
+
+    double[] calculateColumn( LGExpression expression ){
+        evaluator.startColumn();
         int min = Integer.MAX_VALUE;
-        for(int i: columns){
+        for(int i: expression.args){
+            if(i>values.size()-1){
+                return null;
+            }
             int l = values.get(i).length;
             min = min>l?l:min;
         }
 
-        if(columns.length==0){
+        if(expression.args.length==0){
             min=100;
         }
 
+        int n = expression.args.length;
 
-        double[][] values = new double[2][min];
+        double[] ret = new double[min];
+        Double[] arguments = new Double[n];
 
-        return values;
+        for(int i = 0; i<min; i++){
+            for(int j = 0; j<n; j++){
+                arguments[j] = values.get(expression.args[j])[i];
+            }
+            ret[i] = evaluator.evaluate(arguments, expression);
+        }
+        evaluator.finishEvaluations();
+        return ret;
+
 
     }
 

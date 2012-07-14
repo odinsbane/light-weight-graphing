@@ -110,6 +110,16 @@ public class ExpressionEvaluator {
 
     }
 
+    /**
+     * Creates a JS function for evaluation. the function looks as follows:
+     *
+     * function name(columns[0], columns[1], ...){return exp;};
+     *
+     * @param exp expression that will be evaluated
+     * @param name name of the function (do not put spaces in this name!).
+     * @param columns name of the arguments.
+     * @return Function from the Rhino library.
+     */
     public Function createJSFunction(String exp, final String name, String[] columns){
         final StringBuilder str_fun = new StringBuilder().append("function ").append(name);
 
@@ -139,6 +149,7 @@ public class ExpressionEvaluator {
         try {
             return future.get();
         } catch (InterruptedException|ExecutionException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -179,7 +190,7 @@ public class ExpressionEvaluator {
 
     public double evaluate(Double[] args, LGExpression expression){
         Function f = expression.function;
-        double b =(Double)f.call(context, scope, f, args);
+        double b =Double.parseDouble(f.call(context, scope, f, args).toString());
         return b;
     }
 
@@ -200,7 +211,7 @@ public class ExpressionEvaluator {
                 for(int j = 0; j<args.length; j++){
                     args[j] = i*0.1;
                 }
-                Double b =(Double)f.call(context, scope, f, args);
+                Double b =Double.parseDouble(f.call(context, scope, f, args).toString());
                 System.out.println(b);
             }
 
@@ -223,6 +234,7 @@ public class ExpressionEvaluator {
         exp_eval.verify("1/(c1-c1)");
         exp_eval.verify("count++");
         exp_eval.verify("Math.log(c1)");
+        exp_eval.verify("5.0");
 
         System.out.println(1^0);
     }

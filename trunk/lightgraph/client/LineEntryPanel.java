@@ -23,6 +23,7 @@ import java.awt.event.MouseListener;
 public class LineEntryPanel extends JPanel{
     JEntryField xfield, yfield;
     ExpressionEvaluator evaluator;
+    JButton remove;
 
     LineEntryPanel(ExpressionEvaluator eval){
         super();
@@ -30,6 +31,10 @@ public class LineEntryPanel extends JPanel{
         yfield = new JEntryField(eval);
 
         setLayout(new BoxLayout(this, BoxLayout.LINE_AXIS));
+
+        remove = new JButton("X");
+        add(remove);
+
         add(new JLabel("x-column: "), 0.5);
         add(xfield);
 
@@ -54,19 +59,41 @@ public class LineEntryPanel extends JPanel{
         }
     }
 
-    public int[] getColumnsUsed(){
-        return new int[0];
+    LGExpression getXExpression(){
+
+        return xfield.createEvaluator();
+
+
     }
 
+    LGExpression getYExpression(){
+
+        return yfield.createEvaluator();
+
+
+    }
+
+    public void invalidateXField() {
+        xfield.setBackground(xfield.invalid);
+    }
+
+    public void invalidateYField() {
+        xfield.setBackground(yfield.invalid);
+    }
 }
 
 class JEntryField extends JTextField{
     ExpressionEvaluator evaluator;
     LGExpression expression;
-
+    Color valid;
+    Color invalid;
     public JEntryField(ExpressionEvaluator eval){
 
         super();
+
+        valid = getBackground();
+        invalid = Color.RED;
+
         setEvaluator(eval);
         Dimension fixed = new Dimension(250, 30);
 
@@ -108,9 +135,10 @@ class JEntryField extends JTextField{
                 new ActionListener(){
                     public void actionPerformed(ActionEvent evt){
                         if(testExpression()){
+                            setBackground(valid);
                             setEnabled(false);
                         } else{
-                            setBackground(Color.RED);
+                            setBackground(invalid);
                         }
                     }
                 }
@@ -125,8 +153,28 @@ class JEntryField extends JTextField{
 
     }
 
-    void parseExpression(){
+    LGExpression createEvaluator(){
+        String text = getText().trim();
+        LGExpression lge = new LGExpression();
+        String[] columns = evaluator.getColumns(text);
+        lge.function = evaluator.createJSFunction(text,"xValues",columns);
+        lge.args = new int[columns.length];
 
+        for(int i = 0; i<columns.length; i++){
+            System.out.println(columns[i]);
+            String c = columns[i].substring(1,columns[i].length());
+            lge.args[i] = Integer.parseInt(c);
+        }
+
+        return lge;
+    }
+
+    String[] getDataColumns(){
+
+        String text = getText().trim();
+        String[] columns = evaluator.getColumns(text);
+
+        return columns;
     }
 
 
