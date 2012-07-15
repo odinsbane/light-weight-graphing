@@ -21,9 +21,15 @@ Each data file will have its own tab representing the file.
 First go to add a line, now a row will appear at the bottom of the window. There are two fields, the first field is for x values and the second field is for y values. 
 
 Enter an expression into the field that you would like to have evaluated for the x or y values. Columns are represented by 'c' and a nubmer for instance if I wanted to plot the x = first column vs y = x*x, then I can write:
+
+
 {{{ c0 }}}
+
 to get the x value and:
+
+
 {{{c0*c0}}}
+
 
 to calculate the y-value.
 
