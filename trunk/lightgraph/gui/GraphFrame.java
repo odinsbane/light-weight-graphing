@@ -115,7 +115,7 @@ class Animator extends Thread{
             dex--;
         }
         try{
-            sleep(5);
+            sleep(10);
         } catch(Exception e){
             //nada
         }

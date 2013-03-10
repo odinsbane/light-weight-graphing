@@ -45,31 +45,37 @@ public class ButtonPanel extends JPanel implements MouseListener {
     public Dimension getStaticSize(){
         return SIZE;
     }
+    Color fill = new Color(100,100,100,50);
+    Color boundary = new Color(0,0,0);
+
     public void paintComponent(Graphics g){
 
         int w = SIZE.width - TAB;
         int h = SIZE.height - 10;
         Graphics2D g2 = (Graphics2D)g;
-        g2.setColor(new Color(100,100,100,50));
+        g2.setColor(fill);
 
-        g2.setComposite(AlphaComposite.SrcAtop);
+        //g2.setComposite(AlphaComposite.SrcAtop);
         g2.fillRect(0,0,w,h);
         g2.setClip(w,0,TAB,50);
         g2.fillRoundRect(w-10,0,TAB+9,49, 8, 8);
 
-        g2.setComposite(AlphaComposite.SrcIn);
+        //g2.setComposite(AlphaComposite.SrcIn);
+        g2.setColor(boundary);
         g2.drawRoundRect(w-10,0,TAB+9,49, 8, 8);
 
         g2.setClip(1,h,w,10);
-        g2.setComposite(AlphaComposite.SrcAtop);
+        //g2.setComposite(AlphaComposite.SrcAtop);
+        g2.setColor(fill);
         g2.fillRoundRect(-10,h-10,w+9,19, 8, 8);
-        g2.setComposite(AlphaComposite.SrcIn);
+        //g2.setComposite(AlphaComposite.SrcIn);
+        g2.setColor(boundary);
         g2.drawRoundRect(-10,h-10,w+9,19, 8, 8);
 
         g2.setClip(null);
         g2.drawLine(w-1,49,w-1,h);
-        g2.setComposite(AlphaComposite.SrcAtop);
-        super.paintComponents(g);
+        //g2.setComposite(AlphaComposite.SrcAtop);
+        //super.paintComponents(g);
     }
 
     public GraphButton addButton(String label){
@@ -172,7 +178,7 @@ class GraphButton extends JButton{
         setMaximumSize(SIZE);
     }
 
-    public void paint(Graphics g){
+    public void paintComponent(Graphics g){
         g.setColor(Color.BLACK);
         g.drawRoundRect(5,5,SIZE.width-8,SIZE.height-8, 6, 6);
         g.setFont(FONT);

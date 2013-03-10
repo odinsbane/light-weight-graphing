@@ -32,7 +32,7 @@ public class GraphPanel extends JPanel{
 
     @Override
     public void paintComponent(Graphics g){
-        super.paintComponent(g);
+        //super.paintComponent(g);
         g.drawImage(img,
             0,0,img.getWidth(), img.getHeight(),
             Color.WHITE, this);
