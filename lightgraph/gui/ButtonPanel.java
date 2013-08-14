@@ -24,6 +24,7 @@ public class ButtonPanel extends JPanel implements MouseListener {
     int buttons = 0;
     final JFrame parent;
     GraphFormatWindow FORMATTER;
+    FontMetrics metrics;
     ButtonPanel(JFrame parent){
         super();
         this.parent = parent;
@@ -36,7 +37,6 @@ public class ButtonPanel extends JPanel implements MouseListener {
         addButton("DATA");
         addButton("FORMAT");
 
-        
     }
 
     public void setGraph(Graph g){

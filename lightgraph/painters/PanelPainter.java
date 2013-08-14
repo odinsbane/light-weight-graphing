@@ -1,6 +1,7 @@
 package lightgraph.painters;
 
 import java.awt.*;
+import java.awt.geom.AffineTransform;
 
 /**
  * New imagej plugin that ...
@@ -105,5 +106,36 @@ public class PanelPainter implements GraphPainter{
 
     public void endGroup() {
     }
+
+    @Override
+    public int getStringWidth(String label) {
+        FontMetrics metrics = g.getFontMetrics();
+        return metrics.stringWidth(label);
+    }
+
+    @Override
+    public void drawVerticalString(String s, double x, double y) {
+        FontMetrics metrics = g.getFontMetrics();
+        AffineTransform ft = AffineTransform.getRotateInstance(-0.5*Math.PI);
+
+        Font f = g.getFont();
+        Font transformed= f.deriveFont(ft);
+        //g.setTransform(t);
+        g.setFont(transformed);
+
+        int start = (int)y;
+        for(int i = 0; i<s.length(); i++){
+            String ss = s.substring(i,i+1);
+            int l = metrics.stringWidth(s.substring(i,i+1));
+            g.drawString(ss,(int)x,start);
+            start-=l;
+        }
+
+
+        //g.drawString(s,(int)x,(int)y);
+
+        g.setFont(f);
+    }
+
 
 }
