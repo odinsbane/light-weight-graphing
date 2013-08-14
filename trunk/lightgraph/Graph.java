@@ -46,7 +46,7 @@ public class Graph {
     double PADDING = 10;
     double YTICS_WIDTH = 30;
     double XTICS_HEIGHT = 20;
-    double TITLE_HEIGHT=0;
+    double TITLE_HEIGHT= 0;
     double FONT_HEIGHT = 12;
 
     double LEFT_MARGIN, RIGHT_MARGIN, TOP_MARGIN, BOTTOM_MARGIN;
@@ -60,6 +60,7 @@ public class Graph {
     public int CWIDTH;
 
     double KEY_X, KEY_Y;
+    boolean KEY_POSITION_SET=false;
 
     Color AXIS_COLOR, BACKGROUND;
     BufferedImage img;
@@ -84,7 +85,7 @@ public class Graph {
         CWIDTH = 640;
 
         KEY_X = 100;
-        KEY_Y = 30;
+        KEY_Y = 45;
 
         XTICS = true;
         XTIC_COUNT = 7;
@@ -239,18 +240,70 @@ public class Graph {
 
         drawYTics(p,transform);
         drawXTics(p,transform);
+        drawLabels(p);
 
         p.setClip((int)LEFT_MARGIN,(int)TOP_MARGIN,(int)(CWIDTH-(LEFT_MARGIN + RIGHT_MARGIN)),(int)(CHEIGHT-(TOP_MARGIN+BOTTOM_MARGIN)));
         for(DataSet set: DATASETS)
             drawSet(set, p, transform);
 
         drawKey(p);
+
+
+    }
+
+    void drawLabels(GraphPainter p){
+        if(XLABEL){
+            double width = (CWIDTH - LEFT_MARGIN - RIGHT_MARGIN);
+            int length = p.getStringWidth(xlabel);
+            double offset = (width - length)/2 + LEFT_MARGIN;
+
+            p.drawString(xlabel,offset,CHEIGHT - 1.2*FONT_HEIGHT);
+
+
+
+        }
+
+        if(YLABEL){
+            double height = (CHEIGHT - TOP_MARGIN - BOTTOM_MARGIN);
+
+            int length = p.getStringWidth(ylabel);
+            double offset = (height - length)/2 + TOP_MARGIN + length;
+            p.drawVerticalString(ylabel,1.2*FONT_HEIGHT,offset);
+        }
+
+        if(TITLE){
+
+            double width = (CWIDTH - LEFT_MARGIN - RIGHT_MARGIN);
+            int length = p.getStringWidth(title);
+            double offset = (width - length)/2 + LEFT_MARGIN;
+
+            p.drawString(title,offset,1.2*FONT_HEIGHT);
+
+        }
+
+
+
+
     }
 
     void drawKey(GraphPainter p){
 
         int count = 0;
         p.startGroup();
+        if(!KEY_POSITION_SET){
+            int max = 0;
+            for(DataSet set: DATASETS){
+
+                if(set.label!=null){
+                    int width = p.getStringWidth(set.label);
+                    if(width>max) max = width;
+                }
+
+
+            }
+            //8 for some space, 50 for the line, RIGHT_MARGIN to actually be in the graph.
+            KEY_X = max + 8 + 50 + RIGHT_MARGIN;
+        }
         for(DataSet set: DATASETS){
 
             if(set.label!=null){
@@ -359,6 +412,22 @@ public class Graph {
         }
 
 
+    }
+
+    public void setXLabel(String label){
+        XLABEL = true;
+        xlabel = label;
+
+    }
+
+    public void setYLabel(String label){
+        YLABEL = true;
+        ylabel = label;
+    }
+
+    public void setTitle(String label){
+        TITLE = true;
+        title = label;
     }
 
     public void drawBorder(GraphPainter p, AffineTransform transform){
@@ -700,6 +769,7 @@ public class Graph {
      */
     public void setKeyX(double x){
         KEY_X = x;
+        KEY_POSITION_SET=true;
     }
 
     /**

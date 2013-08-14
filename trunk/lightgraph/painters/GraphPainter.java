@@ -29,4 +29,7 @@ public interface GraphPainter {
     public void setFill(boolean fill);
     public void startGroup();
     public void endGroup();
+
+    public int getStringWidth(String label);
+    public void drawVerticalString(String s, double x, double y);
 }

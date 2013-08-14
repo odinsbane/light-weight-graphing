@@ -1,8 +1,11 @@
 package lightgraph.painters;
 
+import javax.swing.*;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -23,6 +26,7 @@ public class SvgPainter implements GraphPainter{
     Rectangle clip;
     String FILL="none";
     Color BACKGROUND;
+    FontMetrics metrics;
     static final String DOCTYPE = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
                 "  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     static final String XML = "<?xml version=\"1.0\" standalone=\"no\"?>\n";
@@ -47,6 +51,7 @@ public class SvgPainter implements GraphPainter{
         String dec = String.format(SVG_TAG,width*1f,height*1f,width,height);
         OUTPUT.append(dec);
         BACKGROUND=background;
+        this.metrics = new BufferedImage(1,1,BufferedImage.TYPE_INT_ARGB).getGraphics().getFontMetrics();
     }
 
 
@@ -239,7 +244,7 @@ public class SvgPainter implements GraphPainter{
     }
 
     public void drawString(String s, double x, double y) {
-        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\">{2}</text>\n", x, y, s);
+        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\" font-family=\"arial\" font-size=\"12\" >{2}</text>\n", x, y, s);
         OUTPUT.append(tag);
     }
 
@@ -293,5 +298,16 @@ public class SvgPainter implements GraphPainter{
 
     public void endGroup() {
         OUTPUT.append("</g>\n");
+    }
+
+    @Override
+    public int getStringWidth(String label) {
+        return metrics.stringWidth(label);
+    }
+
+    @Override
+    public void drawVerticalString(String s, double x, double y) {
+        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\" font-family=\"arial\" font-size=\"12\" >{2}</text>\n", x, y, s);
+        OUTPUT.append(tag);
     }
 }

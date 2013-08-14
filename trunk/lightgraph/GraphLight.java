@@ -74,6 +74,9 @@ public class GraphLight {
         squares.setSize(6);
         ds.setPoints(squares);
 
+        xy.setXLabel("theta");
+        xy.setYLabel("function");
+        xy.setTitle("plot testing");
         
         SwingUtilities.invokeLater(
 
