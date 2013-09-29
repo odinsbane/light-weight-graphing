@@ -788,7 +788,44 @@ public class Graph {
     public double getKeyY(){
         return KEY_Y;
     }
- 
+
+    public GraphPanel getGraphPanel() {
+        if (panel == null) {
+            panel=new GraphPanel(img);
+        }
+        return panel;
+    }
+
+    /**
+     * Based on the coordinates of the panel, gets the coordinates in data space.
+     *
+     * @param panelx x position on the panel.
+     * @param panely y position on the panel.
+     * @return the position in data space.
+     */
+    public double[] getDataCoordinates(double panel_x, double panel_y){
+       //the current position of the click in data space scaled to pixels.
+        double data_x = panel_x - LEFT_MARGIN;
+        double data_y = CHEIGHT - BOTTOM_MARGIN - panel_y;
+        double real_x = MINX + (MAXX - MINX)*data_x/(CWIDTH-LEFT_MARGIN-RIGHT_MARGIN);
+        double real_y = MINY + (MAXY - MINY)*data_y/(CHEIGHT-BOTTOM_MARGIN-TOP_MARGIN);
+
+        return new double[]{real_x, real_y};
+    }
+
+    /**
+     * Takes a coordinate in the data/real space and returns a coodinate in image space.
+     * @param real_x value of x in data space.
+     * @param real_y value of y in data space.
+     * @return {x,y} in px in image space. The image is the buffered image used to draw on a panel.
+     */
+    public double[] getImageCoordinates(double real_x, double real_y){
+
+        double panel_x = LEFT_MARGIN + (real_x - MINX)*(CWIDTH-LEFT_MARGIN-RIGHT_MARGIN)/(MAXX - MINX);
+        double panel_y = CHEIGHT - BOTTOM_MARGIN - (real_y - MINY)*(CHEIGHT - BOTTOM_MARGIN - TOP_MARGIN)/(MAXY - MINY);
+
+        return new double[]{panel_x, panel_y};
+    }
 }
 
 class GraphMutex{
