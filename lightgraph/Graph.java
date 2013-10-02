@@ -757,6 +757,10 @@ public class Graph {
         BACKGROUND = c;
     }
 
+    public void setAxisColor(Color c){
+        AXIS_COLOR=c;
+    }
+
     public Color getBackground(){
         return BACKGROUND;
     }
