@@ -404,6 +404,24 @@ public class Graph {
         if(set.LINE!=null){
             set.LINE.drawLine(pts, painter);
         }
+
+        if(set.ERRORS!=null){
+            if(set.POINTS!=null){
+                set.ERRORS.setWeight(set.POINTS.WEIGHT);
+                set.ERRORS.setSize(set.POINTS.SIZE);
+            } else if(set.LINE!=null){
+                set.ERRORS.setWeight(set.LINE.WIDTH);
+            }
+            painter.startGroup();
+            double scale_x = transform.getScaleX();
+            double scale_y = transform.getScaleY();
+            set.ERRORS.setScale(scale_x, scale_y);
+            for(int i = 0; i<pts.size(); i++){
+                set.ERRORS.drawErrorAt(i, pts.get(i), painter);
+            }
+            painter.endGroup();
+        }
+
         if(set.POINTS!=null){
             painter.startGroup();
             for(Point2D pt: pts)
