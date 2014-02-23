@@ -1,5 +1,7 @@
 package lightgraph;
 
+import lightgraph.elements.ErrorBars;
+
 import java.awt.Color;
 import java.util.ArrayList;
 import java.awt.geom.Point2D;
@@ -18,6 +20,8 @@ public class DataSet implements Iterable<Point2D>{
     public GraphPoints POINTS;
     public GraphLine LINE;
     ArrayList<Point2D> DATA;
+    public ErrorBars ERRORS;
+
     public String label;
     public DataSet(double[] x, double[] y){
 
@@ -30,6 +34,50 @@ public class DataSet implements Iterable<Point2D>{
         for(int i = 0; i<x.length; i++)
             DATA.add(new Point2D.Double(x[i],y[i]));
 
+    }
+
+    /**
+     * Add error bars in the y direction.
+     *
+     * @param errors
+     */
+    public void addYErrorBars(double[] errors){
+        if(errors.length!=DATA.size()){
+            System.err.println("Warning: the number of errors does not equal the number of points");
+        }
+        ERRORS = new ErrorBars(errors, ErrorBars.YAXIS);
+    }
+
+    /**
+     * For adding error bars along the x-axis.
+     *
+     * @param errors
+     */
+    public void addXErrorBars(double[] errors){
+        if(errors.length!=DATA.size()){
+            System.err.println("Warning: the number of errors does not equal the number of points");
+        }
+        ERRORS = new ErrorBars(errors, ErrorBars.XAXIS);
+    }
+
+    /**
+     * For adding error bars on both axis.
+     *
+     * @param xerr
+     * @param yerr
+     */
+    public void addXYErrorBars(double[] xerr, double[] yerr){
+        if(xerr.length!=DATA.size()||yerr.length!=DATA.size()){
+            System.err.println("Warning: the number of errors does not equal the number of points");
+        }
+        ERRORS = new ErrorBars(xerr, yerr);
+    }
+
+    /**
+     * remove the error bars.
+     */
+    public void removeErrorBars(){
+        ERRORS = null;
     }
 
     public void setColor(Color c){
@@ -111,4 +159,6 @@ public class DataSet implements Iterable<Point2D>{
 
         POINTS.setWeight(d);
     }
+
+
 }
