@@ -783,6 +783,17 @@ public class Graph {
         return BACKGROUND;
     }
 
+    public String getXLabel(){
+        return xlabel;
+    }
+
+    public String getYLabel(){
+        return ylabel;
+    }
+
+    public String getTitle(){
+        return title;
+    }
     /**
      * Sets the distance from the right edge of the graph for the top left
      * cornder of the key.

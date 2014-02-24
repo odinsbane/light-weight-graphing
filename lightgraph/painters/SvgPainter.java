@@ -307,7 +307,8 @@ public class SvgPainter implements GraphPainter{
 
     @Override
     public void drawVerticalString(String s, double x, double y) {
-        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\" font-family=\"arial\" font-size=\"12\" >{2}</text>\n", x, y, s);
+
+        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\" font-family=\"arial\" font-size=\"12\" transform=\"rotate(-90 {0} {1})\">{2}</text>\n", x, y, s);
         OUTPUT.append(tag);
     }
 }
