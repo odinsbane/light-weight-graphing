@@ -33,6 +33,8 @@ public class GraphFormatWindow{
     JTextField width, height;
     JTextField font_size, x_tics, y_tics;
     JTextField key_x, key_y;
+    JTextField xlabel,ylabel,title;
+
     final JFrame frame = new JFrame("graph format window");
     ArrayList<DataSetRow> datasets = new ArrayList<DataSetRow>();
     JPanel dataset_pane;
@@ -97,6 +99,7 @@ public class GraphFormatWindow{
         createXRangeComponents(content);
         createYRangeComponents(content);
 
+        createLabelComponents(content);
 
         dataset_pane = new JPanel();
         dataset_pane.setLayout(new BoxLayout(dataset_pane,BoxLayout.PAGE_AXIS));
@@ -125,9 +128,41 @@ public class GraphFormatWindow{
         rowlist.add(accept);
         content.add(createRow(rowlist));
 
-
-
         frame.add(content);
+    }
+
+    void createLabelComponents(JPanel content){
+        JLabel xlabel_label = new JLabel("x-axis label: ");
+        JLabel ylabel_label = new JLabel("y-axis label: ");
+        JLabel title_label = new JLabel("title: ");
+
+        xlabel = new JTextField();
+        ylabel = new JTextField();
+        title = new JTextField();
+        sizeComponent(xlabel, 300, 20);
+        sizeComponent(ylabel, 300, 20);
+        sizeComponent(title, 300, 20);
+        JPanel row = new JPanel();
+        BoxLayout lay = new BoxLayout(row, BoxLayout.LINE_AXIS);
+        row.setLayout(lay);
+        row.add(xlabel_label);
+        row.add(xlabel);
+        content.add(row);
+
+        row = new JPanel();
+        lay = new BoxLayout(row, BoxLayout.LINE_AXIS);
+        row.setLayout(lay);
+        row.add(ylabel_label);
+        row.add(ylabel);
+        content.add(row);
+
+        row = new JPanel();
+        lay = new BoxLayout(row, BoxLayout.LINE_AXIS);
+        row.setLayout(lay);
+        row.add(title_label);
+        row.add(title);
+        content.add(row);
+
     }
 
     void createXRangeComponents(JPanel content){
@@ -236,6 +271,10 @@ public class GraphFormatWindow{
             row.updateSet();
 
         }
+
+        graph.setTitle(title.getText());
+        graph.setXLabel(xlabel.getText());
+        graph.setYLabel(ylabel.getText());
 
 
         graph.refresh(true);
@@ -375,6 +414,10 @@ public class GraphFormatWindow{
 
         key_x.setText(String.format("%.2f",graph.getKeyX()));
         key_y.setText(String.format("%.2f",graph.getKeyY()));
+
+        title.setText(graph.getTitle());
+        xlabel.setText(graph.getXLabel());
+        ylabel.setText(graph.getYLabel());
 
         createDataSetRows();
 
