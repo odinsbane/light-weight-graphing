@@ -128,9 +128,7 @@ public class ButtonPanel extends JPanel implements MouseListener {
         String dir = fd.getDirectory();
         if (fname!=null) {
             File file = new File(dir,fname);
-            SvgPainter painter = new SvgPainter(GRAPH.CHEIGHT, GRAPH.CWIDTH, GRAPH.getBackground());
-            GRAPH.resetGraph(painter);
-            painter.finish(file);
+            GRAPH.saveSvg(file);
         }
 
 

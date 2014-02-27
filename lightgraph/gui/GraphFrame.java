@@ -36,8 +36,8 @@ public class GraphFrame extends JFrame implements MouseListener {
 
         button_panel = new ButtonPanel(this);
         button_panel.setGraph(gp);
-        anime = new Animator(button_panel);
-        anime.start();
+        //anime = new Animator(button_panel);
+        //anime.start();
 
         d = button_panel.getStaticSize();
         button_panel.setBounds(0,0,d.width, d.height);
@@ -47,6 +47,18 @@ public class GraphFrame extends JFrame implements MouseListener {
 
         setContentPane(content);
         
+    }
+
+    @Override
+    public void setVisible(boolean value){
+        super.setVisible(value);
+        if(value){
+            anime = new Animator(button_panel);
+            anime.start();
+        } else{
+            anime.kill();
+        }
+
     }
     synchronized public void showButtons(boolean t){
         anime.showPanel(t);
@@ -127,6 +139,9 @@ class Animator extends Thread{
         dex = STEPS - dex;
         notify();
 
+    }
+    public void kill(){
+        interrupt();
     }
 
 
