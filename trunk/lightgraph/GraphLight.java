@@ -3,6 +3,7 @@ package lightgraph;
 import javax.swing.*;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.TimerTask;
 import java.util.Timer;
@@ -86,7 +87,7 @@ public class GraphLight {
                 }
             }
         );
-
+        
     }
     public static void main2(String[] args){
         double[] x = new double[1000];

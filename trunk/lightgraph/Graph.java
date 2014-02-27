@@ -7,6 +7,7 @@ package lightgraph;
 import lightgraph.gui.GraphFrame;
 import lightgraph.painters.GraphPainter;
 import lightgraph.painters.PanelPainter;
+import lightgraph.painters.SvgPainter;
 
 import java.awt.*;
 import java.awt.geom.AffineTransform;
@@ -482,6 +483,12 @@ public class Graph {
 
         IMAGE_LOCK.release();
 
+    }
+
+    public void saveSvg(File f){
+        SvgPainter painter = new SvgPainter(CHEIGHT, CWIDTH, getBackground());
+        resetGraph(painter);
+        painter.finish(f);
     }
 
     /**
