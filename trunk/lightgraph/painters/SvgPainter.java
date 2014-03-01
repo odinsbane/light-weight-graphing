@@ -27,6 +27,7 @@ public class SvgPainter implements GraphPainter{
     String FILL="none";
     Color BACKGROUND;
     FontMetrics metrics;
+    boolean FINISHED=false;
     static final String DOCTYPE = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
                 "  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     static final String XML = "<?xml version=\"1.0\" standalone=\"no\"?>\n";
@@ -42,9 +43,7 @@ public class SvgPainter implements GraphPainter{
      * @param background background color, primarily used for filling hollow strokes.
      */
     public SvgPainter(int height, int width, Color background){
-        //double aspect = 1.0/width*height;
-        //double page_width = width;
-        //double page_height = height;
+
         OUTPUT = new StringBuilder();
         OUTPUT.append(XML);
         OUTPUT.append(DOCTYPE);
@@ -249,9 +248,7 @@ public class SvgPainter implements GraphPainter{
     }
 
     public void finish(File f){
-        if(CLIPPING)
-            OUTPUT.append("</g>\n");
-        OUTPUT.append("</svg>");
+        finish();
 
         try{
             BufferedWriter bw = new BufferedWriter(new FileWriter(f));
@@ -260,6 +257,20 @@ public class SvgPainter implements GraphPainter{
         }catch(Exception e){
             e.printStackTrace();
         }
+    }
+
+    public void finish(){
+        if(FINISHED) return;
+
+        FINISHED=true;
+        if(CLIPPING)
+            OUTPUT.append("</g>\n");
+        OUTPUT.append("</svg>");
+    }
+
+    public String getOutput(){
+        if(!FINISHED) finish();
+        return OUTPUT.toString();
     }
 
     public Color getColor(){
