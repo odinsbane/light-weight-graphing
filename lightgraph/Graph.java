@@ -882,7 +882,7 @@ class GraphMutex{
     }
     synchronized public void release(){
         HELD=false;
-        notify();
+        notifyAll();
     }
 
 

@@ -52,11 +52,9 @@ public class GraphFrame extends JFrame implements MouseListener {
     @Override
     public void setVisible(boolean value){
         super.setVisible(value);
-        if(value){
+        if(anime==null) {
             anime = new Animator(button_panel);
             anime.start();
-        } else{
-            anime.kill();
         }
 
     }
