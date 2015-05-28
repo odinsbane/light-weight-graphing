@@ -1,0 +1,1 @@
+This is a library for plotting graphs and managing data.  It outputs graphs to png files or to svg files.

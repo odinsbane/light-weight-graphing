@@ -1,0 +1,38 @@
+#This sentence describes how to use the client to generate a graph.
+
+# Introduction #
+
+The graph client is a jar file in downloads [LightGraphClient.jar](http://code.google.com/p/light-weight-graphing/downloads/detail?name=LightGraphClient.jar&can=2&q=). The only requirement for this library is java 7. It is built using Mozilla Rhino and the lightgraph library. They are both included with the jar.
+
+# Details #
+
+## Starting the Program ##
+
+The program can be started as an executeable jar file.
+` java -jar LightGraphClient.jar `
+
+## Loading Data ##
+To load data, use the file->"load columns" menu item. The select a file that is tab or space separated with the data organized in colums. Such as data that was saved from a lightgraph.Graph.
+
+Each data file will have its own tab representing the file.
+
+## Plot a Graph ##
+
+First go to add a line, now a row will appear at the bottom of the window. There are two fields, the first field is for x values and the second field is for y values.
+
+Enter an expression into the field that you would like to have evaluated for the x or y values. Columns are represented by 'c' and a nubmer for instance if I wanted to plot the x = first column vs y = x\*x, then I can write:
+
+
+` c0 `
+
+to get the x value and:
+
+
+`c0*c0`
+
+
+to calculate the y-value.
+
+The expression evaluator, evaluates expressions as javascript so any function that is accessible in javascript is also accessible in these fields. For example if I wanted to plot the sin function.
+
+`Math.sin(c0)`
