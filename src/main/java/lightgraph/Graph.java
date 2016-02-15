@@ -73,6 +73,10 @@ public class Graph {
     public GraphPanel panel;
     GraphMutex IMAGE_LOCK = new GraphMutex();
     private JFrame frame;
+    private LGFont ticFont = new LGFont("Liberation", Font.PLAIN, 10);
+    private LGFont titleFont = new LGFont("Liberation", Font.PLAIN, 14);
+    private LGFont labelFont = new LGFont("Liberation", Font.PLAIN, 12);
+
     public Graph(){
         MINX = Double.MAX_VALUE;
         MINY = Double.MAX_VALUE;
@@ -257,7 +261,7 @@ public class Graph {
             double width = (CWIDTH - LEFT_MARGIN - RIGHT_MARGIN);
             int length = p.getStringWidth(xlabel);
             double offset = (width - length)/2 + LEFT_MARGIN;
-
+            p.setFont(labelFont);
             p.drawString(xlabel,offset,CHEIGHT - 1.2*FONT_HEIGHT);
 
 
@@ -277,7 +281,7 @@ public class Graph {
             double width = (CWIDTH - LEFT_MARGIN - RIGHT_MARGIN);
             int length = p.getStringWidth(title);
             double offset = (width - length)/2 + LEFT_MARGIN;
-
+            p.setFont(titleFont);
             p.drawString(title,offset,1.2*FONT_HEIGHT);
 
         }
@@ -311,6 +315,7 @@ public class Graph {
                 double top = KEY_Y + FONT_HEIGHT*1.4*count;
                 double left = CWIDTH - KEY_X;
                 p.setColor(AXIS_COLOR);
+                p.setFont(labelFont);
                 p.drawString(set.label, left + 50, top);
                 p.setColor(set.COLOR);
                 ArrayList<Point2D> pts = new ArrayList<Point2D>();
@@ -359,7 +364,7 @@ public class Graph {
             int y = (int)pt.getY();
 
             p.drawLine(x0,y,x1,y);
-
+            p.setFont(ticFont);
             p.drawString(MessageFormat.format("{0}",ynot),x0-(int)YTICS_WIDTH,y + 5);
 
         }
@@ -385,7 +390,7 @@ public class Graph {
             int y1 = y0-5;
 
             p.drawLine(x,y0,x,y1);
-
+            p.setFont(ticFont);
             p.drawString(xtics[i],x-3,y0 + 15);
 
         }
@@ -865,6 +870,18 @@ public class Graph {
         double panel_y = CHEIGHT - BOTTOM_MARGIN - (real_y - MINY)*(CHEIGHT - BOTTOM_MARGIN - TOP_MARGIN)/(MAXY - MINY);
 
         return new double[]{panel_x, panel_y};
+    }
+
+    public void setTitleFont(LGFont font) {
+        titleFont = font;
+    }
+
+    public void setLabelFont(LGFont labelFont) {
+        this.labelFont = labelFont;
+    }
+
+    public void setTicFont(LGFont ticFont) {
+        this.ticFont = ticFont;
     }
 }
 

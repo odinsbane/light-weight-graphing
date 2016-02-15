@@ -1,5 +1,7 @@
 package lightgraph.painters;
 
+import lightgraph.LGFont;
+
 import java.awt.*;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Rectangle2D;
@@ -29,7 +31,7 @@ public interface GraphPainter {
     public void setFill(boolean fill);
     public void startGroup();
     public void endGroup();
-
+    public void setFont(LGFont font);
     public int getStringWidth(String label);
     public void drawVerticalString(String s, double x, double y);
 }

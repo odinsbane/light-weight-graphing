@@ -1,5 +1,7 @@
 package lightgraph.painters;
 
+import lightgraph.LGFont;
+
 import java.awt.*;
 import java.awt.geom.AffineTransform;
 
@@ -17,7 +19,7 @@ public class PanelPainter implements GraphPainter{
     private boolean FILL = false;
     float dashes[];
     float width;
-
+    LGFont font;
     public PanelPainter(Graphics2D g, Color background){
         this.g = g;
         default_stroke = g.getStroke();
@@ -56,6 +58,7 @@ public class PanelPainter implements GraphPainter{
     }
 
     public void drawString(String s, double x, double y) {
+        g.setFont(font.getAwtFont());
         g.drawString(s,(int)x,(int)y);
     }
 
@@ -108,6 +111,11 @@ public class PanelPainter implements GraphPainter{
     }
 
     @Override
+    public void setFont(LGFont font) {
+        this.font = font;
+    }
+
+    @Override
     public int getStringWidth(String label) {
         FontMetrics metrics = g.getFontMetrics();
         return metrics.stringWidth(label);
@@ -115,6 +123,7 @@ public class PanelPainter implements GraphPainter{
 
     @Override
     public void drawVerticalString(String s, double x, double y) {
+        g.setFont(font.getAwtFont());
         FontMetrics metrics = g.getFontMetrics();
         AffineTransform ft = AffineTransform.getRotateInstance(-0.5*Math.PI);
 

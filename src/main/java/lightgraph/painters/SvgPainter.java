@@ -1,5 +1,7 @@
 package lightgraph.painters;
 
+import lightgraph.LGFont;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -28,6 +30,7 @@ public class SvgPainter implements GraphPainter{
     Color BACKGROUND;
     FontMetrics metrics;
     boolean FINISHED=false;
+    LGFont font = new LGFont("Arial", "Bold", 12);
     static final String DOCTYPE = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
                 "  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
     static final String XML = "<?xml version=\"1.0\" standalone=\"no\"?>\n";
@@ -243,7 +246,10 @@ public class SvgPainter implements GraphPainter{
     }
 
     public void drawString(String s, double x, double y) {
-        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\" font-family=\"arial\" font-size=\"12\" >{2}</text>\n", x, y, s);
+        String tag = MessageFormat.format(
+            "<text x=\"{0}\" y=\"{1}\" font-family=\"{3}\" font-size=\"{4}pt\" font-style=\"{5}\">{2}</text>\n",
+            x, y, s, font.getName(), font.getSize(), font.getStyle()
+        );
         OUTPUT.append(tag);
     }
 
@@ -312,6 +318,11 @@ public class SvgPainter implements GraphPainter{
     }
 
     @Override
+    public void setFont(LGFont font) {
+        this.font = font;
+    }
+
+    @Override
     public int getStringWidth(String label) {
         return metrics.stringWidth(label);
     }
@@ -319,7 +330,10 @@ public class SvgPainter implements GraphPainter{
     @Override
     public void drawVerticalString(String s, double x, double y) {
 
-        String tag = MessageFormat.format("<text x=\"{0}\" y=\"{1}\" font-family=\"arial\" font-size=\"12\" transform=\"rotate(-90 {0} {1})\">{2}</text>\n", x, y, s);
+        String tag = MessageFormat.format(
+            "<text x=\"{0}\" y=\"{1}\" font-family=\"{3}\" font-size=\"{4}pt\" font-style=\"{5}\" transform=\"rotate(-90 {0} {1})\">{2}</text>\n",
+            x, y, s, font.getName(), font.getSize(), font.getStyle()
+        );
         OUTPUT.append(tag);
     }
 
