@@ -269,6 +269,31 @@ public abstract class GraphPoints {
 
 
     }
+
+    public static GraphPoints outlinedCircles(){
+
+        GraphPoints gp = new GraphPoints(){
+            RectangularShape shape = new Ellipse2D.Double(0,0,SIZE, SIZE);
+            public void drawPoint(Point2D pt, GraphPainter painter){
+                Color c = painter.getColor();
+                shape.setFrame(pt.getX() - SIZE/2, pt.getY() - SIZE/2,SIZE, SIZE);
+                painter.fill(shape);
+                painter.setColor(Color.BLACK);
+
+                painter.setLineWidth(WEIGHT);
+                painter.drawPath(shape);
+                painter.restoreLineWidth();
+
+                painter.setColor(c);
+            }
+
+        };
+
+        return gp;
+
+
+    }
+
     static public List<GraphPoints> getGraphPoints(){
         ArrayList<GraphPoints> points  = new ArrayList<GraphPoints>();
         points.add(crossPlus());
@@ -282,6 +307,7 @@ public abstract class GraphPoints {
         points.add(outlinedTriangles());
         points.add(hollowTriangles());
         points.add(filledTriangles());
+        points.add(outlinedCircles());
         return points;
     }
 

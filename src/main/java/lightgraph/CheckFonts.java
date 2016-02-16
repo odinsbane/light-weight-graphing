@@ -1,6 +1,7 @@
 package lightgraph;
 
 import javax.swing.UIManager;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 
@@ -32,11 +33,15 @@ public class CheckFonts {
 
 
         Graph b = new Graph();
-        b.addData(x, y);
+        DataSet set = b.addData(x, y);
+        set.setLineWidth(2.0);
+        set.setPoints(GraphPoints.outlinedCircles());
+        set.setColor(Color.BLUE);
+
         System.out.println(Font.getFont("Liberation Sans"));
-        b.setTitleFont(new LGFont("Liberation Sans",Font.BOLD, 14));
-        b.setLabelFont(new LGFont("Liberation Serif", Font.BOLD, 12));
-        b.setTicFont(new LGFont("Liberation Mono",Font.PLAIN, 10));
+        b.setTitleFont(new LGFont("Helvetica",Font.BOLD, 14));
+        b.setLabelFont(new LGFont("Helvetica", Font.PLAIN, 12));
+        b.setTicFont(new LGFont("Helvetica",Font.PLAIN, 10));
         b.setXLabel("Arial Labels");
         b.setYLabel("Arial Labels");
         b.setTitle("Helvetica Titles");
