@@ -42,7 +42,8 @@ public class GraphFx extends Application {
             y[i] = x[i]*x[i] - 2;
         }
         addData(x,y);
-
+        graph.setXLabel("x");
+        graph.setYLabel("x<tspan baseline-shift=\"super\" font-size=\"8pt\">2</tspan>");
         refreshGraph();
 
     }

@@ -26,7 +26,6 @@ public class ErrorBars {
     double[] y_errors;
     private double size = 4;
     private double weight = 1;
-
     /**
      * For applying Error bars along a single, x or y, axis.
      *
@@ -149,6 +148,23 @@ public class ErrorBars {
 
 
         g.show(true, "Error Bar Test");
+    }
+    public boolean hasXData(){
+        return x_errors!=null;
+    }
+
+    public boolean hasYData(){
+        return y_errors!=null;
+    }
+    public double[] getErrorData(int axis){
+        switch(axis){
+            case XAXIS:
+                return x_errors;
+            case YAXIS:
+                return y_errors;
+            default:
+                throw new IllegalArgumentException("Axis must be either x, 0, or y, 1. Provided value: " + axis);
+        }
     }
 
 }

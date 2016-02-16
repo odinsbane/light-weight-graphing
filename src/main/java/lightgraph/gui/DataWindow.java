@@ -2,11 +2,11 @@ package lightgraph.gui;
 
 import lightgraph.DataSet;
 import lightgraph.Graph;
+import lightgraph.elements.ErrorBars;
 
 import javax.swing.*;
 import javax.swing.table.AbstractTableModel;
-import java.awt.*;
-import java.awt.List;
+import java.awt.FileDialog;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -14,6 +14,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 /**
@@ -89,9 +90,43 @@ public class DataWindow implements Runnable, ActionListener {
 
 
             }
-            dw.addColumn("x" + i, x);
-            dw.addColumn("y" + i, y);
 
+            String label = ds.label;
+            String xlabel, ylabel;
+            if(label==null||label.isEmpty()){
+                label = "" + i;
+                xlabel = "x" + i;
+                ylabel = "y" + i;
+            } else{
+                xlabel = label + "-x";
+                ylabel = label + "-y";
+            }
+            dw.addColumn(xlabel, x);
+            dw.addColumn(ylabel, y);
+            ErrorBars errors = ds.getErrorBars();
+            if(errors!=null){
+                if(errors.hasXData()){
+                    List<Double> data = Arrays.stream(
+                            errors.getErrorData(ErrorBars.XAXIS)
+                    ).mapToObj(
+                            d->d
+                    ).collect(
+                            Collectors.toList()
+                    );
+                    dw.addColumn(label + "-sigmax", data);
+                }
+
+                if(errors.hasYData()){
+                    List<Double> data = Arrays.stream(
+                            errors.getErrorData(ErrorBars.YAXIS)
+                    ).mapToObj(
+                            d->d
+                    ).collect(
+                            Collectors.toList()
+                    );
+                    dw.addColumn(label + "-sigmay", data);
+                }
+            }
         }
 
         return dw;
@@ -99,6 +134,26 @@ public class DataWindow implements Runnable, ActionListener {
 
 
     }
+
+    /**
+     * Splits a line, the same way as it was written. Columns can contain empty strings, no trailing tab. Which means
+     * "1\t2\t\n" would split to {"1", "2", ""} and "1\t2\n" splits to {"1", "2"}
+     *
+     * @param line
+     * @return
+     */
+    public  static List<String> splitOnTabs(String line){
+        List<String> ret = new ArrayList<>();
+        int last=0;
+        int next;
+        while((next=line.indexOf('\t',last))>=0){
+            ret.add(line.substring(last, next));
+            last = next+1;
+        }
+        ret.add(line.substring(last, line.length()));
+        return ret;
+    }
+
     public void actionPerformed(ActionEvent event){
         if(event.getActionCommand().equals("vertical"))
             saveVertical();
@@ -110,7 +165,7 @@ public class DataWindow implements Runnable, ActionListener {
      * The only action - save.
      */
     public void saveVertical() {
-        FileDialog fd = new FileDialog(frame,"Save CSV File",FileDialog.SAVE);
+        FileDialog fd = new FileDialog(frame,"Save CSV File", FileDialog.SAVE);
 
         fd.setFile("data.csv");
         fd.setVisible(true);

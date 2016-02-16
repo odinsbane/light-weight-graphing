@@ -12,6 +12,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.text.MessageFormat;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * New imagej plugin that ...
@@ -324,7 +326,12 @@ public class SvgPainter implements GraphPainter{
 
     @Override
     public int getStringWidth(String label) {
-        return metrics.stringWidth(label);
+        String stripped = stripSvgTags(label);
+        return metrics.stringWidth(stripped);
+    }
+
+    String stripSvgTags(String tagged){
+        return tagged.replaceAll("<[^>]*>", "");
     }
 
     @Override

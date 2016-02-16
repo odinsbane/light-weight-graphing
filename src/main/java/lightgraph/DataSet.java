@@ -160,5 +160,9 @@ public class DataSet implements Iterable<Point2D>{
         POINTS.setWeight(d);
     }
 
+    public ErrorBars getErrorBars(){
+        return ERRORS;
+    }
+
 
 }
