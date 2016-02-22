@@ -691,7 +691,23 @@ public class Graph {
 
     }
 
+
     public void setContentSize(int width, int height){
+
+        if(XTICS||YTICS){
+            createTics();
+        }
+
+        if(XTICS){
+            width += YTICS_WIDTH;
+        }
+
+        if(YTICS){
+
+            height += XTICS_HEIGHT;
+
+        }
+
         if(CWIDTH==width || CHEIGHT==height)
             return;
 
