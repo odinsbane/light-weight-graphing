@@ -691,6 +691,15 @@ public class Graph {
 
     }
 
+    public void setContentSize(int width, int height){
+        if(CWIDTH==width || CHEIGHT==height)
+            return;
+
+        CWIDTH = width;
+        CHEIGHT = height;
+        SCALE = true;
+    }
+
 
     /**
      * Shows the graph in its own JFrame
