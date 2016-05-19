@@ -162,8 +162,9 @@ public class DataWindow implements Runnable, ActionListener {
 
     }
     /**
-     * The only action - save.
-     */
+     * The only actions - save.
+     *
+     * */
     public void saveVertical() {
         FileDialog fd = new FileDialog(frame,"Save CSV File", FileDialog.SAVE);
 
@@ -205,8 +206,9 @@ public class DataWindow implements Runnable, ActionListener {
     }
 
      /**
-     * The only action - save.
-     */
+     * The only actions - save.
+      *
+      * */
     public void saveHorizontal() {
         FileDialog fd = new FileDialog(frame,"Save CSV File",FileDialog.SAVE);
 

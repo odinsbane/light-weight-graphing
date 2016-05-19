@@ -869,8 +869,8 @@ public class Graph {
     /**
      * Based on the coordinates of the panel, gets the coordinates in data space.
      *
-     * @param panelx x position on the panel.
-     * @param panely y position on the panel.
+     * @param panel_x x position on the panel.
+     * @param panel_y y position on the panel.
      * @return the position in data space.
      */
     public double[] getDataCoordinates(double panel_x, double panel_y){

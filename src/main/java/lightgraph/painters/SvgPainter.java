@@ -249,8 +249,8 @@ public class SvgPainter implements GraphPainter{
 
     public void drawString(String s, double x, double y) {
         String tag = MessageFormat.format(
-            "<text x=\"{0}\" y=\"{1}\" font-family=\"{3}\" font-size=\"{4}pt\" font-style=\"{5}\">{2}</text>\n",
-            x, y, s, font.getName(), font.getSize(), font.getStyle()
+            "<text x=\"{0}\" y=\"{1}\" font-family=\"{3}\" font-size=\"{4}pt\" font-style=\"{5}\" fill=\"{6}\">{2}</text>\n",
+            x, y, s, font.getName(), font.getSize(), font.getStyle(), svgColorString(COLOR)
         );
         OUTPUT.append(tag);
     }
@@ -338,8 +338,8 @@ public class SvgPainter implements GraphPainter{
     public void drawVerticalString(String s, double x, double y) {
 
         String tag = MessageFormat.format(
-            "<text x=\"{0}\" y=\"{1}\" font-family=\"{3}\" font-size=\"{4}pt\" font-style=\"{5}\" transform=\"rotate(-90 {0} {1})\">{2}</text>\n",
-            x, y, s, font.getName(), font.getSize(), font.getStyle()
+            "<text x=\"{0}\" y=\"{1}\" font-family=\"{3}\" font-size=\"{4}pt\" font-style=\"{5}\" fill=\"{6}\" transform=\"rotate(-90 {0} {1})\">{2}</text>\n",
+            x, y, s, font.getName(), font.getSize(), font.getStyle(), svgColorString(COLOR)
         );
         OUTPUT.append(tag);
     }
