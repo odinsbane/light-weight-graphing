@@ -381,7 +381,6 @@ public class Graph {
         p.endGroup();
 
         String format = "%"+max+"s";
-        int w = getSpaceWidth(ticFont);
         p.startGroup();
         for(int i = 0; i<YTIC_COUNT; i++){
             double ynot = MINY + i*delta;
@@ -396,25 +395,9 @@ public class Graph {
             p.setFont(ticFont);
 
             String tic = String.format(format, ytics[i]);
-            int empties = tic.lastIndexOf(' ');
-            empties += 1;
-            p.drawString(tic,x0-(int)YTICS_WIDTH + w*empties,y + 5);
-
-            System.out.println(String.format(format, ytics[i]));
+            p.drawString(tic,x0-(int)YTICS_WIDTH,y + 5);
         }
         p.endGroup();
-    }
-
-    public int getSpaceWidth(LGFont font){
-        Graphics g = img.getGraphics();
-        font.getSize();
-        Font f = font.getAwtFont();
-        f.deriveFont(font.getSize());
-        g.setFont(f);
-
-        int value = SwingUtilities.computeStringWidth(g.getFontMetrics()," ");
-        g.dispose();
-        return value;
     }
 
     /**

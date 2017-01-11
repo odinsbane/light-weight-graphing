@@ -59,7 +59,17 @@ public class PanelPainter implements GraphPainter{
 
     public void drawString(String s, double x, double y) {
         g.setFont(font.getAwtFont());
-        g.drawString(s,(int)x,(int)y);
+
+        //find the number of empty leading spaces.
+        int empty = 0;
+        int offset = 0;
+        while(s.charAt(empty)==' '&&empty<=s.length()){
+            empty++;
+        }
+        if(empty>0){
+            offset = getStringWidth(" ")*empty;
+        }
+        g.drawString(s,(int)x + offset,(int)y);
     }
 
     public void setLineWidth(double width){
