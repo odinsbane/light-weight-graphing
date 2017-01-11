@@ -9,9 +9,14 @@ import lightgraph.painters.GraphPainter;
 import lightgraph.painters.PanelPainter;
 import lightgraph.painters.SvgPainter;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -19,9 +24,12 @@ import java.util.ArrayList;
 import java.awt.image.BufferedImage;
 import java.awt.geom.Point2D;
 
+import java.util.List;
 
 import javax.imageio.ImageIO;
-import javax.swing.*;
+import javax.swing.JFrame;
+import javax.swing.SwingUtilities;
+import java.awt.FontMetrics;
 
 
 /**
@@ -222,7 +230,7 @@ public class Graph {
         }
 
         p.setColor(BACKGROUND);
-        p.fill(new Rectangle(0,0,CWIDTH,CHEIGHT));
+        p.fill(new Rectangle2D.Double(0,0,CWIDTH,CHEIGHT));
 
         /*
         [ x']   [  m00  m01  m02  ] [ x ]   [ m00x + m01y + m02 ]
@@ -351,7 +359,11 @@ public class Graph {
      */
     public void drawYTics(GraphPainter p, AffineTransform t){
         double delta = (MAXY - MINY)/(YTIC_COUNT-1);
-
+        int max = 0;
+        for(String tic: ytics){
+            max = tic.length()>max?tic.length():max;
+        }
+        p.startGroup();
         for(int i = 0; i<YTIC_COUNT; i++){
             double ynot = MINY + i*delta;
             double xnot = MINX;
@@ -359,15 +371,50 @@ public class Graph {
 
             t.transform(pt,pt);
 
-            int x0 = (int)pt.getX();
-            int x1 = x0+5;
-            int y = (int)pt.getY();
+            double x0 = pt.getX();
+            double x1 = x0+5;
+            double y = pt.getY();
 
             p.drawLine(x0,y,x1,y);
-            p.setFont(ticFont);
-            p.drawString(MessageFormat.format("{0}",ynot),x0-(int)YTICS_WIDTH,y + 5);
 
         }
+        p.endGroup();
+
+        String format = "%"+max+"s";
+        int w = getSpaceWidth(ticFont);
+        p.startGroup();
+        for(int i = 0; i<YTIC_COUNT; i++){
+            double ynot = MINY + i*delta;
+            double xnot = MINX;
+            Point2D pt = new Point2D.Double(xnot,ynot);
+
+            t.transform(pt,pt);
+
+            double x0 = pt.getX();
+            double y = pt.getY();
+
+            p.setFont(ticFont);
+
+            String tic = String.format(format, ytics[i]);
+            int empties = tic.lastIndexOf(' ');
+            empties += 1;
+            p.drawString(tic,x0-(int)YTICS_WIDTH + w*empties,y + 5);
+
+            System.out.println(String.format(format, ytics[i]));
+        }
+        p.endGroup();
+    }
+
+    public int getSpaceWidth(LGFont font){
+        Graphics g = img.getGraphics();
+        font.getSize();
+        Font f = font.getAwtFont();
+        f.deriveFont(font.getSize());
+        g.setFont(f);
+
+        int value = SwingUtilities.computeStringWidth(g.getFontMetrics()," ");
+        g.dispose();
+        return value;
     }
 
     /**
@@ -378,6 +425,10 @@ public class Graph {
     public void drawXTics(GraphPainter p, AffineTransform t){
         double delta = (MAXX - MINX)/(XTIC_COUNT-1);
 
+        int max = 0;
+
+        //x position to be left-justified.
+        p.startGroup();
         for(int i = 0; i<XTIC_COUNT; i++){
             double ynot = MINY;
             double xnot = MINX + delta*i;
@@ -385,15 +436,34 @@ public class Graph {
 
             t.transform(pt,pt);
 
-            int x = (int)pt.getX();
-            int y0 = (int)pt.getY();
-            int y1 = y0-5;
+            double x = pt.getX();
+            double y0 = pt.getY();
+            double y1 = y0-5;
 
             p.drawLine(x,y0,x,y1);
-            p.setFont(ticFont);
-            p.drawString(xtics[i],x-3,y0 + 15);
+            String tl = xtics[i];
+            max = max>tl.length()?max:tl.length();
 
         }
+        p.endGroup();
+
+        String format = "%s";
+        p.startGroup();
+        for(int i = 0; i<XTIC_COUNT; i++){
+            double ynot = MINY;
+            double xnot = MINX + delta*i;
+            Point2D pt = new Point2D.Double(xnot,ynot);
+
+            t.transform(pt,pt);
+
+            double x = pt.getX();
+            double y0 = pt.getY();
+
+            p.setFont(ticFont);
+            p.drawString(String.format(format, xtics[i]),x-3,y0 + 15);
+
+        }
+        p.endGroup();
     }
     public void clearData(){
         DATASETS.clear();
