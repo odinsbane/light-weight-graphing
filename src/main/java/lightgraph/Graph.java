@@ -492,17 +492,29 @@ public class Graph {
     }
 
     public void setXLabel(String label){
+        if(label.length()==0){
+            XLABEL=false;
+            return;
+        }
         XLABEL = true;
         xlabel = label;
 
     }
 
     public void setYLabel(String label){
+        if(label.length()==0){
+            XLABEL=false;
+            return;
+        }
         YLABEL = true;
         ylabel = label;
     }
 
     public void setTitle(String label){
+        if(label.length()==0){
+            XLABEL=false;
+            return;
+        }
         TITLE = true;
         title = label;
     }

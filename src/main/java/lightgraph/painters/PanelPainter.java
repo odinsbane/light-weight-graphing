@@ -63,7 +63,7 @@ public class PanelPainter implements GraphPainter{
         //find the number of empty leading spaces.
         int empty = 0;
         int offset = 0;
-        while(s.charAt(empty)==' '&&empty<=s.length()){
+        while(empty<s.length()&&s.charAt(empty)==' '){
             empty++;
         }
         if(empty>0){
