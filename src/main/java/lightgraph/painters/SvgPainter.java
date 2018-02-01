@@ -71,7 +71,12 @@ public class SvgPainter implements GraphPainter{
         String blue = Integer.toString(c.getBlue(),16);
         if(blue.length()==1)
             blue = "0" + blue;
-        return MessageFormat.format("#{0}{1}{2}", red, green, blue);
+
+        String alpha = Integer.toString(c.getAlpha(),16);
+        if(blue.length()==1)
+            alpha = "0" + alpha;
+
+        return MessageFormat.format("#{0}{1}{2}{3}", red, green, blue, alpha);
     }
 
     /**
