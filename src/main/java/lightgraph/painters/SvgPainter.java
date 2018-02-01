@@ -32,6 +32,7 @@ public class SvgPainter implements GraphPainter{
     Color BACKGROUND;
     FontMetrics metrics;
     boolean FINISHED=false;
+    double OPACITY = 1;
     LGFont font = new LGFont("Arial", "Bold", 12);
     static final String DOCTYPE = "<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \n" +
                 "  \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n";
@@ -72,11 +73,7 @@ public class SvgPainter implements GraphPainter{
         if(blue.length()==1)
             blue = "0" + blue;
 
-        String alpha = Integer.toString(c.getAlpha(),16);
-        if(blue.length()==1)
-            alpha = "0" + alpha;
-
-        return MessageFormat.format("#{0}{1}{2}{3}", red, green, blue, alpha);
+        return MessageFormat.format("#{0}{1}{2}", red, green, blue);
     }
 
     /**
@@ -126,6 +123,7 @@ public class SvgPainter implements GraphPainter{
         }
         OUTPUT.append("\"");
         OUTPUT.append(" stroke=\"" + svgColorString(COLOR)  + '"');
+        OUTPUT.append(" stroke-opacity=\"" + OPACITY + "\"");
         if(DASHES!=null){
             String dash = "";
             int n = DASHES.length;
@@ -146,6 +144,7 @@ public class SvgPainter implements GraphPainter{
 
     public void setColor(Color c) {
         COLOR = c;
+        OPACITY=c.getAlpha()*1.0/255.0;
     }
 
     /**
@@ -236,7 +235,9 @@ public class SvgPainter implements GraphPainter{
         }
         OUTPUT.append("\"");
         OUTPUT.append(" stroke=\"none\"");
-        OUTPUT.append(" fill=\"" + svgColorString(COLOR)  + '"' + "/>\n");
+        OUTPUT.append(" fill=\"" + svgColorString(COLOR)  + '"');
+        OUTPUT.append(" fill-opacity=\"" + OPACITY + '"');
+        OUTPUT.append("/>\\n");
     }
     public void setClip(int x, int y, int w, int h){
 
